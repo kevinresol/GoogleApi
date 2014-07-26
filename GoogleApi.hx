@@ -1,8 +1,8 @@
 package;
-import openfl.events.IEventDispatcher.Function;
-#if openfl
-import openfl.events.EventDispatcher;
-#end
+import flash.net.URLRequest;
+import openfl.events.Event;
+import openfl.events.IOErrorEvent;
+import openfl.net.URLLoader;
 
 #if cpp
 import cpp.Lib;
@@ -14,13 +14,12 @@ import neko.Lib;
 import openfl.utils.JNI;
 #end
 
+using tink.CoreApi;
 
 class GoogleApi 
 {
-	public static var callback:String->String->Void;
-	
-	private static var inited:Bool = false;
-	private static var eventDispatcher:EventDispatcher = new EventDispatcher();
+	public static var debugCallback:String->Void;
+	public static var ready:Surprise<Bool, Error> = init();
 	
 	public static function sampleMethod (inputValue:Int):Int {
 		
@@ -44,30 +43,56 @@ class GoogleApi
 		#end
 	}
 	
-	public static function init():Void
+	
+	public static function getToken(scope:String):Surprise<String, Error>
 	{
-		if (inited)
-			throw "Already called init();";
-		
-		inited = true;
-		googleapi_init_jni({dispatch:dispatchEvent});
+		return Future.async(function(handler)
+		{
+			googleapi_get_token_jni( { handler:function(s:String) 
+			{
+				if (s.indexOf("failed") != -1)
+					handler(Failure(new Error(s)));
+				else
+					handler(Success(s));
+			} }, scope);
+		});
 	}
 	
-	private static function dispatchEvent(type:String, contents:String):Void
+	public static function invalidateToken(token:String):Void
 	{
-		eventDispatcher.dispatchEvent(new GoogleApiEvent(type, contents));
+		googleapi_invalidate_token_jni(
 	}
 	
-	
-	public static function addEventListener(type, listener, useCapture = false, priority = 0, useWeakReference = false):Void
+	public static function makeRestCall(url:String):Surprise<String, Error>
 	{
-		eventDispatcher.addEventListener(type, listener, useCapture, priority, useWeakReference);
+		return Future.async(function(handler)
+		{
+			
+			var request = new URLRequest(url);
+			var loader = new URLLoader();
+			loader.addEventListener(Event.COMPLETE, function(_) handler(Success(loader.data)));
+			loader.addEventListener(IOErrorEvent.IO_ERROR, function(e:IOErrorEvent) handler(Failure(new Error(e.toString()))));
+			//TODO add error listener
+			loader.load(request);
+		});
 	}
 	
-	
-	
-	
-	
+	private static function init():Surprise<Bool, Error>
+	{
+		return Future.async(function(handler)
+		{
+			var googleapi_init_jni = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "init", "(Lorg/haxe/lime/HaxeObject;Lorg/haxe/lime/HaxeObject;)V");
+			googleapi_init_jni( { handler:function(s:String) 
+			{
+				if (s.indexOf("failed") != -1)
+					handler(Failure(new Error(s)));
+				else
+					handler(Success(true));
+			} },
+			{handler:function(s:String) if (debugCallback != null) debugCallback(s)}
+			);
+		});
+	}
 	
 	
 	private static var googleapi_sample_method = Lib.load ("googleapi", "googleapi_sample_method", 1);
@@ -75,8 +100,15 @@ class GoogleApi
 	
 	#if (android && openfl)
 	private static var googleapi_sample_method_jni = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "sampleMethod", "(I)I");
-	private static var googleapi_init_jni = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "init", "(Lorg/haxe/lime/HaxeObject;)V");
+	private static var googleapi_get_token_jni = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "getToken", "(Lorg/haxe/lime/HaxeObject;Ljava/lang/String;)V");
+	private static var googleapi_invalidate_token_jni = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "invalidateToken", "(Ljava/lang/String;)V");
 	#end
 	
 	
+}
+
+@:enum
+abstract ActionKind(String)
+{
+	var TOKEN = "token";
 }

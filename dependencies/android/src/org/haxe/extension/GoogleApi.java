@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 import android.view.View;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.Plus.PlusOptions;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -50,13 +52,20 @@ import org.haxe.lime.HaxeObject;
 public class GoogleApi extends Extension 
 {
 	
-	protected static GameHelper mHelper;
-	protected static HaxeObject mEventDispatcher;
-	protected static String mAccountName;
+	protected static GameHelper mHelper;	
+	protected static HaxeObject mAccountNameHandler;
+	protected static HaxeObject mTokenHandler;
+	protected static HaxeObject mDebugHandler;
+	protected static String mTokenScope = "";
+	protected static String mAccountName = "";
+	
 	private static final String TAG = "GoogleApi";	
+	
 	private static final String INIT = "init";
 	private static final String TOKEN = "token";
 	private static final String ACCOUNT_NAME = "accountName";
+	private static final String SIGN_IN_SUCCEEDED = "signInSucceeded";
+	private static final String SIGN_IN_FAILED = "signInFailed";
 	
 	private static final int USER_RECOVERABLE_AUTH = 5;
 	private static final int ACCOUNT_PICKER = 2;
@@ -70,21 +79,37 @@ public class GoogleApi extends Extension
 		
 	}
 	
-	public static void init(HaxeObject eventDispatcher)
+	public static void init(HaxeObject accountNameHandler, HaxeObject debugHandler)
 	{
-		Log.i(TAG, "init");
-		
-		if(mEventDispatcher != null)
-			return; //TODO throw "already inited" error
-		
-		mEventDispatcher = eventDispatcher;
-		
-		dispatch(INIT);
-		
-		// Choose account (will not show picker there is only one account)
-		Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-			new String[] { "com.google" }, false, null, null, null, null);		
-		Extension.mainActivity.startActivityForResult(intent, ACCOUNT_PICKER);
+		mAccountNameHandler = accountNameHandler;
+		mDebugHandler = debugHandler;
+	}
+	
+	public static void getToken(HaxeObject handler, String scope)
+	{
+		Log.i(TAG, "getToken " + mAccountName);
+		if(mTokenHandler == null) //if not null => already processing another getToken request
+		{
+			if(mAccountName == "")
+				handler.call1("handler", "failed: GoogleAPI not yet ready"); // ACCOUNT_NAME not yet ready
+			else
+			{
+				mTokenHandler = handler;
+				mTokenScope = scope;
+				new GetAuthToken().execute();
+			}
+		}
+	}
+	
+	public static void invalidateToken(String token)
+	{
+		GoogleAuthUtil.invalidateToken(Extension.mainContext, token);
+	}
+	
+	private static void trace(String message)
+	{
+		if(mDebugHandler != null)
+			mDebugHandler.call1("handler", message);
 	}
 	
 	
@@ -95,22 +120,10 @@ public class GoogleApi extends Extension
 	 */
 	public boolean onActivityResult (int requestCode, int resultCode, Intent data) 
 	{
-		
-		if (requestCode == ACCOUNT_PICKER && resultCode == Activity.RESULT_OK) 
+		if (requestCode == USER_RECOVERABLE_AUTH && resultCode == Activity.RESULT_OK) 
 		{
-			mAccountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-			dispatch(ACCOUNT_NAME, mAccountName);
-			//new GetAuthToken("oauth2:https://www.googleapis.com/auth/userinfo.profile").execute();
-			
-			new GetAuthToken("oauth2:https://www.googleapis.com/auth/games").execute();
-			
-		} 
-		else if (requestCode == USER_RECOVERABLE_AUTH && resultCode == Activity.RESULT_OK) 
-		{
-			
-			//new GetAuthToken("oauth2:https://www.googleapis.com/auth/userinfo.profile").execute();
-			
-			new GetAuthToken("oauth2:https://www.googleapis.com/auth/games").execute();
+			// Call it again returned from UserRecoverableAuthException 
+			new GetAuthToken().execute();
 		} 
 		else if (requestCode == USER_RECOVERABLE_AUTH && resultCode == Activity.RESULT_CANCELED) 
 		{
@@ -118,6 +131,7 @@ public class GoogleApi extends Extension
 				Toast.LENGTH_SHORT).show();*/
 		}
 	   
+		mHelper.onActivityResult(requestCode, resultCode, data);
 		return true;
 		
 	}
@@ -128,7 +142,37 @@ public class GoogleApi extends Extension
 	 */
 	public void onCreate (Bundle savedInstanceState) 
 	{
-		
+		// create game helper with all APIs (Games, Plus, AppState):
+		mHelper = new GameHelper(Extension.mainActivity, GameHelper.CLIENT_GAMES | GameHelper.CLIENT_PLUS /*| GameHelper.CLIENT_APPSTATE*/);
+		mHelper.enableDebugLog(true);
+
+		// enable debug logs (if applicable)
+		/*if (DEBUG_BUILD) {
+			mHelper.enableDebugLog(true, "GameHelper");
+		}*/
+
+		GameHelperListener listener = new GameHelper.GameHelperListener() 
+		{
+			@Override
+			public void onSignInSucceeded() 
+			{
+				trace("come on we succeeded!");
+				mAccountName = Plus.AccountApi.getAccountName(mHelper.getApiClient());
+				
+				// throw it back to haxe
+				if(mAccountNameHandler != null)
+					mAccountNameHandler.call1("handler", mAccountName);
+			}
+			
+			@Override
+			public void onSignInFailed() 
+			{
+				
+			}
+
+		};
+		mHelper.setPlusApiOptions(PlusOptions.builder().build());
+		mHelper.setup(listener);
 	}
 	
 	
@@ -137,8 +181,6 @@ public class GoogleApi extends Extension
 	 */
 	public void onDestroy () 
 	{
-		
-		
 		
 	}
 	
@@ -150,8 +192,6 @@ public class GoogleApi extends Extension
 	public void onPause () 
 	{
 		
-		
-		
 	}
 	
 	
@@ -161,8 +201,6 @@ public class GoogleApi extends Extension
 	 */
 	public void onRestart () 
 	{
-		
-		
 		
 	}
 	
@@ -174,8 +212,6 @@ public class GoogleApi extends Extension
 	public void onResume ()
 	{
 		
-		
-		
 	}
 	
 	
@@ -186,7 +222,7 @@ public class GoogleApi extends Extension
 	 */
 	public void onStart () 
 	{
-		
+		mHelper.onStart(Extension.mainActivity);
 	}
 	
 	
@@ -196,27 +232,17 @@ public class GoogleApi extends Extension
 	 */
 	public void onStop () 
 	{
-		
+		mHelper.onStop();
 	}
 	
-	private static void dispatch(String type)
-	{
-		dispatch(type, "");
-	}
 	
-	private static void dispatch(String type, String contents)
-	{
-		if(mEventDispatcher != null)
-			mEventDispatcher.call2("dispatch", type, contents);
-	}
+	
 	
 	static class GetAuthToken extends AsyncTask<Void, Void, String> 
 	{
-		private String mScope;
-		
-		public GetAuthToken(String scope) 
+		public GetAuthToken() 
 		{
-			mScope = scope;
+			
 		}
 		
 		/*@Override
@@ -230,17 +256,20 @@ public class GoogleApi extends Extension
 		{
 			try 
 			{
-				String token = GoogleAuthUtil.getToken(Extension.mainActivity, mAccountName, mScope);
+				String token = GoogleAuthUtil.getToken(Extension.mainActivity, mAccountName, "oauth2:" + mTokenScope);
 				return token;
-				
 			} 
 			catch (UserRecoverableAuthException userRecoverableException) 
 			{
-				Extension.mainActivity.startActivityForResult(userRecoverableException.getIntent(),USER_RECOVERABLE_AUTH);
+				Extension.mainActivity.startActivityForResult(userRecoverableException.getIntent(), USER_RECOVERABLE_AUTH);
 			} 
-			catch (Exception e) 
+			catch (IOException ioEx)
 			{
-				e.printStackTrace();
+				return "failed: IO Error - " + ioEx.getMessage();
+			}
+			catch (GoogleAuthException authEx) 
+			{
+				return "failed: GoogleAuthException - " + authEx.getMessage();
 			}
 			return null;
 		}
@@ -249,7 +278,13 @@ public class GoogleApi extends Extension
 		protected void onPostExecute(String resultToken) 
 		{
 			if (resultToken != null)
-				dispatch(TOKEN, resultToken);
+			{
+				mTokenHandler.call1("handler", resultToken);
+				mTokenHandler = null;
+				mTokenScope = "";
+			}
 		}
 	}
+	
+	
 }
