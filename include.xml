@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<section unless="display">
+	<ndll name="googleapi" />
+	
+	<!-- Use the following for an Android Java extension, not needed otherwise -->
+	
+	<dependency name="google-play-services" path="dependencies/google-play-services_lib" if="android" />
+	<dependency name="googleapi" path="dependencies/android" if="android" />
+	<android extension="org.haxe.extension.GoogleApi" />
+	</section>
+</project>
