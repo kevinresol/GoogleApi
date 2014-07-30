@@ -66,29 +66,34 @@ class GoogleApi
 	}
 	
 	public static function makeRestCall(url:String, variables:URLVariables, scope:String):Surprise<String, Error>
-	{
-		//ready -> getToken -> load url
-		
+	{		
 		//TODO cache
+		//ready -> getToken -> load url
 		return ready.flatMap(function(ready)
 		{
-			return getToken(scope).flatMap(function(outcome)			
+			try
 			{
-				try
+				ready.sure();
+				return getToken(scope).flatMap(function(outcome)	
 				{
-					variables.access_token = outcome.sure();
-					return Future.async(function(handler)
+					try
 					{
-						var request = new URLRequest(url + "?" + variables.toString());
-						var loader = new URLLoader();
-						loader.addEventListener(Event.COMPLETE, function(_) handler(Success(loader.data)));
-						loader.addEventListener(IOErrorEvent.IO_ERROR, function(e:IOErrorEvent) handler(Failure(new Error(e.toString()))));
-						loader.load(request);
-					});
-				}
-				catch (e:Error)
-					return Future.sync(Failure(e));
-			});
+						variables.access_token = outcome.sure();
+						return Future.async(function(handler)
+						{
+							var request = new URLRequest(url + "?" + variables.toString());
+							var loader = new URLLoader();
+							loader.addEventListener(Event.COMPLETE, function(_) handler(Success(loader.data)));
+							loader.addEventListener(IOErrorEvent.IO_ERROR, function(e:IOErrorEvent) handler(Failure(new Error(e.toString()))));
+							loader.load(request);
+						});
+					}
+					catch (e:Error) // token error (e.g. typo in scope)
+						return Future.sync(Failure(e));
+				});
+			}
+			catch (e:Error) // ready error (e.g. user does not authorize)
+				return Future.sync(Failure(e));
 		});
 	}
 	
@@ -96,16 +101,11 @@ class GoogleApi
 	{
 		return Future.async(function(handler)
 		{
-			var googleapi_init_jni = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "init", "(Lorg/haxe/lime/HaxeObject;Lorg/haxe/lime/HaxeObject;)V");
-			googleapi_init_jni( { handler:function(s:String) 
-			{
-				if (s.indexOf("failed") != -1)
-					handler(Failure(new Error(s)));
-				else
-					handler(Success(true));
-			} },
-			{handler:function(s:String) if (debugCallback != null) debugCallback(s)}
-			);
+			var googleapi_init_jni = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "init", "(Lorg/haxe/lime/HaxeObject;Lorg/haxe/lime/HaxeObject;)V");			
+			var accountNameHandler = { handler:function(s:String) /* s is accountname if success*/ handler(s.indexOf("failed") != -1 ? Failure(new Error(s)) : Success(true)) };
+			var debugHandler = { handler:function(s:String) if (debugCallback != null) debugCallback(s) };
+			
+			googleapi_init_jni(accountNameHandler, debugHandler);
 		});
 	}
 	
