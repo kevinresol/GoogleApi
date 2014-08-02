@@ -1,12 +1,12 @@
 {
   "name": "googleapi",
-  "url": "",
+  "url": "https://github.com/kevinresol/GoogleApi",
   "license": "MIT",
   "tags": [],
-  "description": "",
-  "version": "1.0.0",
+  "description": "A Haxe library for the Google Play Games API",
+  "version": "0.0.1",
   "releasenote": "",
-  "contributors": [""],
+  "contributors": ["KevinResoL"],
   "dependencies": { 
     "tink_core":""
   }
