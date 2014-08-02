@@ -1,8 +1,10 @@
-package;
+package googleapi ;
 import flash.net.URLRequest;
+import haxe.Json;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.URLLoader;
+import openfl.net.URLRequestMethod;
 import openfl.net.URLVariables;
 
 #if cpp
@@ -19,8 +21,13 @@ using tink.CoreApi;
 
 class GoogleApi 
 {
+	public static inline var URI_GAMES:String = "https://www.googleapis.com/games/v1";
+	public static inline var SCOPE_GAMES:String = "https://www.googleapis.com/auth/games";
+	
 	public static var debugCallback:String->Void;
 	public static var ready:Surprise<Bool, Error> = init();
+	
+	private static var tokenCache:Map<String, Surprise<String, Error>> = new Map();
 	
 	public static function sampleMethod (inputValue:Int):Int {
 		
@@ -47,17 +54,29 @@ class GoogleApi
 	
 	public static function getToken(scope:String):Surprise<String, Error>
 	{
-		//TODO cache
-		return Future.async(function(handler)
+		if (!tokenCache.exists(scope))
 		{
-			googleapi_get_token_jni( { handler:function(s:String) 
+			tokenCache[scope] = ready.flatMap(function(ready)
 			{
-				if (s.indexOf("failed") != -1)
-					handler(Failure(new Error(s)));
-				else
-					handler(Success(s));
-			} }, scope);
-		});
+				try
+				{
+					ready.sure();
+					return Future.async(function(handler)		 
+					{
+						googleapi_get_token_jni( { handler:function(s:String) 
+						{
+							if (s.indexOf("failed") != -1)
+								handler(Failure(new Error(s)));
+							else
+								handler(Success(s));
+						} }, scope);
+					});
+				}
+				catch (e:Error) // ready error (e.g. user does not authorize)
+					return Future.sync(Failure(e));
+			});
+		}
+		return tokenCache[scope];
 	}
 	
 	public static function invalidateToken(token:String):Void
@@ -65,35 +84,42 @@ class GoogleApi
 		googleapi_invalidate_token_jni(token);
 	}
 	
-	public static function makeRestCall(url:String, variables:URLVariables, scope:String):Surprise<String, Error>
-	{		
+	public static function makeRawRestCall(scope:String, url:String, ?variables:URLVariables, post:Bool = false):Surprise<String, Error>
+	{
 		//TODO cache
 		//ready -> getToken -> load url
-		return ready.flatMap(function(ready)
+		return getToken(scope).flatMap(function(outcome)	
 		{
 			try
 			{
-				ready.sure();
-				return getToken(scope).flatMap(function(outcome)	
+				if (variables == null)
+					variables = new URLVariables();
+				
+				variables.access_token = outcome.sure();
+				return Future.async(function(handler)
 				{
-					try
-					{
-						variables.access_token = outcome.sure();
-						return Future.async(function(handler)
-						{
-							var request = new URLRequest(url + "?" + variables.toString());
-							var loader = new URLLoader();
-							loader.addEventListener(Event.COMPLETE, function(_) handler(Success(loader.data)));
-							loader.addEventListener(IOErrorEvent.IO_ERROR, function(e:IOErrorEvent) handler(Failure(new Error(e.toString()))));
-							loader.load(request);
-						});
-					}
-					catch (e:Error) // token error (e.g. typo in scope)
-						return Future.sync(Failure(e));
+					var request = new URLRequest(url + "?" + variables.toString());
+					if (post) request.method = URLRequestMethod.POST;
+					
+					var loader = new URLLoader();
+					loader.addEventListener(Event.COMPLETE, function(_) handler(Success(loader.data)));
+					loader.addEventListener(IOErrorEvent.IO_ERROR, function(e:IOErrorEvent) handler(Failure(new Error(e.toString()))));
+					loader.load(request);
 				});
 			}
-			catch (e:Error) // ready error (e.g. user does not authorize)
+			catch (e:Error) // token error (e.g. typo in scope)
 				return Future.sync(Failure(e));
+		});
+	}
+	
+	public static function makeRestCall<T>(scope:String, url:String, ?variables:URLVariables, post:Bool = false):Surprise<T, Error>
+	{
+		return makeRawRestCall(scope, url, variables, post).map(function(outcome)
+		{
+			try
+				return Success(Json.parse(outcome.sure()))
+			catch (e:Error)
+				return Failure(e);
 		});
 	}
 	

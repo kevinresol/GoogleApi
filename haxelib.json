@@ -7,7 +7,7 @@
   "version": "1.0.0",
   "releasenote": "",
   "contributors": [""],
-  "dependencies": { "tink_core":""
-
+  "dependencies": { 
+    "tink_core":""
   }
 }
