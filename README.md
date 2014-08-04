@@ -3,23 +3,24 @@
 A Haxe library for the Google Play Games API 
 
 ## Dependencies
+
 tink_core
 
 ## Setup
-Coming soon...
 
-GameActivity.java:
-```java
-public class GameActivity extends android.support.v4.app.FragmentActivity implements SensorEventListener
-```
+### Android
 
 Project xml:
 ```xml
-<template path="templates/GameActivity.java" rename="src/org/haxe/lime/GameActivity.java" if="android"/>
 <setenv name="GooglePlayID" value="your-app-id" if="android"/>
 ```
 
+### iPhone
+
+Coming soon
+
 ## Usage
+
 ```haxe
 // list leaderboards
 Leaderboards.list().handle(function(r)
