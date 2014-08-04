@@ -8,6 +8,17 @@ tink_core
 ## Setup
 Coming soon...
 
+GameActivity.java:
+```java
+public class GameActivity extends android.support.v4.app.FragmentActivity implements SensorEventListener
+```
+
+Project xml:
+```xml
+<template path="templates/GameActivity.java" rename="src/org/haxe/lime/GameActivity.java" if="android"/>
+<setenv name="GooglePlayID" value="your-app-id" if="android"/>
+```
+
 ## Usage
 ```haxe
 // list leaderboards

@@ -1,22 +1,25 @@
-package googleapi ;
+package googleapi.rest ;
 import openfl.net.URLVariables;
 using tink.CoreApi;
 /**
  * https://developers.google.com/games/services/web/api/players
  * @author Kevin
  */
+private typedef GetResult = Surprise<Player, Error>;
+private typedef ListResult = Surprise<PlayerListResponse, Error>;
+
 class Players
 {
 
-	public static function get(playerId:String):Surprise<Player, Error>
+	public static function get(playerId:String):GetResult
 	{
-		var url = '${GoogleApi.URI_GAMES}/players/$playerId';
-		return GoogleApi.makeRestCall(GoogleApi.SCOPE_GAMES, url);
+		var url = '${Rest.URI_GAMES}/players/$playerId';
+		return Rest.call(GoogleApi.SCOPE_GAMES, url);
 	}
 	
-	public static function list(playerId:String, collection:PlayerCollection, maxResults:Int = 0, pageToken:String = ""):Surprise<PlayerListResponse, Error>
+	public static function list(playerId:String, collection:PlayerCollection, maxResults:Int = 0, pageToken:String = ""):ListResult
 	{
-		var url = '${GoogleApi.URI_GAMES}/players/me/players/$collection';
+		var url = '${Rest.URI_GAMES}/players/me/players/$collection';
 		
 		var variables = new URLVariables();
 		if (maxResults > 0)
@@ -24,7 +27,7 @@ class Players
 		if (pageToken != "")
 			variables.pageToken = pageToken;
 			
-		return GoogleApi.makeRestCall(GoogleApi.SCOPE_GAMES, url, variables);
+		return Rest.call(GoogleApi.SCOPE_GAMES, url, variables);
 	}
 }
 
