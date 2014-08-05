@@ -109,7 +109,11 @@ class Macro
 				addFunctionArgument(func, argName, argType, defaultValue);
 				
 				// Add the parameter to the URLVariable
-				varSection.push(macro $p{["variables", argName]} = $i{argName});
+				trace(argName, defaultValue);
+				if (defaultValue != null)
+					varSection.push(macro if($i{argName} != $defaultValue) $p{["variables", argName]} = $i{argName});
+				else
+					varSection.push(macro $p{["variables", argName]} = $i{argName});
 				
 				// Compose the cache index
 				if (cached) indexSection.push(macro indexBuf.push(Std.string($i{argName})));
