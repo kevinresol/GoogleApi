@@ -109,7 +109,6 @@ class Macro
 				addFunctionArgument(func, argName, argType, defaultValue);
 				
 				// Add the parameter to the URLVariable
-				trace(argName, defaultValue);
 				if (defaultValue != null)
 					varSection.push(macro if($i{argName} != $defaultValue) $p{["variables", argName]} = $i{argName});
 				else
@@ -269,4 +268,5 @@ class Macro
 			default: null;
 		}
 	}
+	
 }
