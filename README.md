@@ -4,18 +4,26 @@ A Haxe library for the Google Play Games API
 
 ## Dependencies
 
-tink_core
+[tink_core][https://github.com/haxetink/tink_core]
 
 ## Setup
 
-### Android
+```
+haxelib git googleapi https://github.com/kevinresol/GoogleApi.git
+```
+
+```
+lime rebuild googleapi android
+```
+
+#### Android
 
 Project xml:
 ```xml
 <setenv name="GooglePlayID" value="your-app-id" if="android"/>
 ```
 
-### iPhone
+#### iPhone
 
 Coming soon
 
