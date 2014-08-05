@@ -73,9 +73,32 @@ class GoogleApi
 	
 	public static function invalidateToken(token:String):Void
 	{
-		googleapi_invalidate_token_jni(token);
+		for (scope in tokenCache.keys())
+		{
+			tokenCache[scope].handle(function(t) try if (t.sure() == token) invalidateTokenByScope(scope) catch (e:Error) {});
+		}
 	}
 	
+	public static function invalidateTokenByScope(scope:String):Void
+	{
+		if (tokenCache.exists(scope))
+		{
+			tokenCache[scope].handle(function(t)
+			{
+				try
+				{
+					var token = t.sure();
+					googleapi_invalidate_token_jni(token);
+				}
+				catch (e:Error)
+				{
+					
+				}
+				
+				tokenCache.remove(scope);
+			});
+		}
+	}
 	
 	private static function init():Surprise<Bool, Error>
 	{
@@ -94,8 +117,8 @@ class GoogleApi
 	private static var googleapi_init = Lib.load ("googleapi", "googleapi_sample_method", 1);
 	
 	#if (android && openfl)
-	private static var googleapi_sample_method_jni = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "sampleMethod", "(I)I");
-	private static var googleapi_get_token_jni = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "getToken", "(Lorg/haxe/lime/HaxeObject;Ljava/lang/String;)V");
-	private static var googleapi_invalidate_token_jni = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "invalidateToken", "(Ljava/lang/String;)V");
+	private static var googleapi_sample_method_jni:Int->Int 			= JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "sampleMethod", "(I)I");
+	private static var googleapi_get_token_jni:Dynamic->String->Void 	= JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "getToken", "(Lorg/haxe/lime/HaxeObject;Ljava/lang/String;)V");
+	private static var googleapi_invalidate_token_jni:String->Void 		= JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "invalidateToken", "(Ljava/lang/String;)V");
 	#end
 }
