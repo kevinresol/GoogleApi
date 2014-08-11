@@ -5,6 +5,9 @@ REST APIs are built with Macros
 Cache the results, using all the parameters as cache index
 
 ###### `@:rest(scope, uri, method)`
+- scope
+- uri
+- method: http method, default is `"GET"`
 
 ###### `@:pathParam(pathParamName, methodParamName, methodParamType)`
 
