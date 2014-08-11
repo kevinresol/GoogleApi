@@ -1,11 +1,11 @@
 ### REST 
 REST APIs are built with Macros
 
-#### @:cache
+###### `@:cache`
 Cache the results, using all the parameters as cache index
 
-#### @:rest(scope, uri, method)
+###### `@:rest(scope, uri, method)`
 
-#### @:pathParam(pathParamName, methodParamName, methodParamType)
+###### `@:pathParam(pathParamName, methodParamName, methodParamType)`
 
-#### @:queryParam(paramName, paramType, paramDefaultValue)
+###### `@:queryParam(paramName, paramType, paramDefaultValue)`
