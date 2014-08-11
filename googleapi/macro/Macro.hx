@@ -133,6 +133,9 @@ class Macro
 		// Construct the whole function body
 		if (cached) // if this field is cached, add a if-block to check if the cache already exist
 		{
+			//add a method argument for forcing the method to reload (ignore any caches)
+			addFunctionArgument(func, "forceReload", TPath({pack:[], name:"Bool"}), macro false);
+			
 			var cacheName = getCacheName(field);
 			indexSection.push(macro var index = indexBuf.join("-"));
 			
@@ -144,7 +147,7 @@ class Macro
 			
 			// the if-statement (plus the if-block)
 			for (expr in indexSection) funcBodyBlockExprs.push(expr);
-			funcBodyBlockExprs.push(macro if (!$i{cacheName}.exists(index)) $b{blockExprs});
+			funcBodyBlockExprs.push(macro if (forceReload || !$i{cacheName}.exists(index)) $b{blockExprs});
 			
 			// the return-statement
 			funcBodyBlockExprs.push(macro return $i{cacheName}.get(index));
