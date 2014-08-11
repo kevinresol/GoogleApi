@@ -4,7 +4,7 @@ A Haxe library for the Google Play Games API
 
 ## Dependencies
 
-[tink_core][https://github.com/haxetink/tink_core]
+[tink_core](https://github.com/haxetink/tink_core)
 
 ## Setup
 
