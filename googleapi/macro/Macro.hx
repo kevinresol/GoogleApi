@@ -120,7 +120,15 @@ class Macro
 		}
 		
 		// the REST-call expr
-		var restCallExpr = method == null ? (macro Rest.call($scope, url, variables)) : (macro Rest.call($scope, url, variables, $method));
+		
+		var restCallExpr = if (varInited)
+		{
+			method == null ? (macro Rest.call($scope, url, variables)) : (macro Rest.call($scope, url, variables, $method));
+		}
+		else
+		{
+			method == null ? (macro Rest.call($scope, url)) : (macro Rest.call($scope, url, null, $method));
+		}
 		
 		// Construct the whole function body
 		if (cached) // if this field is cached, add a if-block to check if the cache already exist

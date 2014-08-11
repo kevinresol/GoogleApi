@@ -6,10 +6,6 @@ using tink.CoreApi;
  * https://developers.google.com/games/services/web/api/scores/get
  * @author Kevin
  */
-private typedef GetResult = Surprise<PlayerLeaderboardScoreListResponse, Error>;
-private typedef ListResult = Surprise<LeaderboardScores, Error>;
-private typedef ListWindowResult = Surprise<LeaderboardScores, Error>;
-
 @:build(googleapi.macro.Macro.build())
 class Scores
 {
@@ -21,10 +17,13 @@ class Scores
 	 * @return
 	 */
 	@:cache
-	public function get(playerId:String, leaderboardId:String, timeSpan:GetTimeSpan):GetResult
+	@:rest(GoogleApi.SCOPE_GAMES, Rest.URI_GAMES)
+	@:pathParam("players", playerId, String)
+	@:pathParam("leaderboards", leaderboardId, String)
+	@:pathParam("scores", timeSpan, GetTimeSpan)
+	public function get():Surprise<PlayerLeaderboardScoreListResponse, Error>
 	{		
-		var url = '${Rest.URI_GAMES}/players/$playerId/leaderboards/$leaderboardId/scores/$timeSpan';
-		return Rest.call(GoogleApi.SCOPE_GAMES, url);
+		
 	}
 	
 	@:cache
@@ -34,91 +33,34 @@ class Scores
 	@:queryParam(timeSpan, ListTimeSpan)
 	@:queryParam(maxResults, Int, 0)
 	@:queryParam(pageToken, String, "")
-	public static function testList():ListResult
+	public static function list():Surprise<LeaderboardScores, Error>
 	{
 		
 	}
-	
-	@:cache
-	public static function list(leaderboardId:String, collection:ScoresCollection, timeSpan:ListTimeSpan, maxResults:Int = 0, pageToken:String = ""):ListResult
-	{
-		var index = '$leaderboardId-$collection-$timeSpan-$maxResults-$pageToken';
-		
-		if (!listCache.exists(index))
-		{
-			var url = '${Rest.URI_GAMES}/leaderboards/$leaderboardId/scores/$collection';
-			
-			var variables = new URLVariables('timeSpan=$timeSpan');
-			if (maxResults > 0)
-				variables.maxResults = maxResults;
-			if (pageToken != "")
-				variables.pageToken = pageToken;
-				
-			listCache[index] = Rest.call(GoogleApi.SCOPE_GAMES, url, variables);
-		}
-		
-		return listCache[index];
-	}
-	
 	
 	@:cache
 	@:rest(GoogleApi.SCOPE_GAMES, Rest.URI_GAMES)
-	@:pathParam("leaderboardId", leaderboardId, String)
+	@:pathParam("leaderboards", leaderboardId, String)
 	@:pathParam("window", collection, ScoresCollection)
 	@:queryParam(timeSpan, ListTimeSpan)
 	@:queryParam(maxResults, Int, 0)
 	@:queryParam(pageToken, String, "")
 	@:queryParam(resultsAbove, Int, 0)
 	@:queryParam(returnTopIfAbsent, Bool, true)
-	public static function testListWindow():ListResult
+	public static function listWindow():Surprise<LeaderboardScores, Error>
 	{
 		
-	}
-	
-	@:cache
-	public static function listWindow(leaderboardId:String, collection:ScoresCollection, timeSpan:ListTimeSpan, maxResults:Int = 0, pageToken:String = "", resultsAbove:Int = 0, returnTopIfAbsent:Bool = true):ListWindowResult
-	{
-		var index = '$leaderboardId-$collection-$timeSpan-$maxResults-$pageToken-$returnTopIfAbsent';
-		
-		if (!listWindowCache.exists(index))
-		{
-			var url = '${Rest.URI_GAMES}/leaderboards/$leaderboardId/window/$collection';
-			
-			var variables = new URLVariables('timeSpan=$timeSpan&returnTopIfAbsent=$returnTopIfAbsent');
-			if (maxResults > 0)
-				variables.maxResults = maxResults;
-			if (pageToken != "")
-				variables.pageToken = pageToken;
-			if (resultsAbove > 0)
-				variables.resultsAbove = resultsAbove;
-			
-			listWindowCache[index] = Rest.call(GoogleApi.SCOPE_GAMES, url, variables);
-		}
-		
-		return listWindowCache[index];
 	}
 	
 	@:rest(GoogleApi.SCOPE_GAMES, Rest.URI_GAMES, "POST")
-	@:pathParam("leaderboardId", "leaderboardId", String)
+	@:pathParam("leaderboards", "leaderboardId", String)
 	@:pathParam("scores")
 	@:queryParam("score", Int)
 	@:queryParam("scoreTag", String, "")
-	public static function testSubmit():ListResult
+	public static function submit():Surprise<PlayerScoreResponse, Error>
 	{
 		
 	}
-	
-	public static function submit(leaderboardId:String, score:Int, scoreTag:String = ""):Surprise<PlayerScoreResponse, Error>
-	{
-		var url = '${Rest.URI_GAMES}/leaderboards/$leaderboardId/scores';
-		
-		var variables = new URLVariables('score=$score');
-		if (scoreTag != "")
-			variables.scoreTag = scoreTag;
-			
-		return Rest.call(GoogleApi.SCOPE_GAMES, url, variables, "POST");
-	}
-	
 }
 
 @:enum
