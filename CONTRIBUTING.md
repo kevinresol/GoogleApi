@@ -12,3 +12,5 @@ Cache the results, using all the parameters as cache index
 ###### `@:pathParam(pathParamName, methodParamName, methodParamType)`
 
 ###### `@:queryParam(paramName, paramType, paramDefaultValue)`
+
+###### `@:requestBody(bodyDataType)`
