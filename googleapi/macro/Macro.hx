@@ -117,6 +117,13 @@ class Macro
 				// Compose the cache index
 				if (cached) indexSection.push(macro indexBuf.push(Std.string($i{argName})));
 			}
+			else if (m.name == ":requestBody")
+			{
+				var bodyType = composeType(getConstantString(m.params[0]));
+				
+				// Create a parameter for the method
+				addFunctionArgument(func, "requestBody", bodyType);
+			}
 		}
 		
 		// the REST-call expr

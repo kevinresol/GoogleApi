@@ -28,7 +28,7 @@ class Scores
 	
 	@:cache
 	@:rest(GoogleApi.SCOPE_GAMES, Rest.URI_GAMES)
-	@:pathParam("leaderboardId", leaderboardId, String)
+	@:pathParam("leaderboards", leaderboardId, String)
 	@:pathParam("scores", collection, ScoresCollection)
 	@:queryParam(timeSpan, ListTimeSpan)
 	@:queryParam(maxResults, Int, 0)
@@ -58,6 +58,15 @@ class Scores
 	@:queryParam("score", Int)
 	@:queryParam("scoreTag", String, "")
 	public static function submit():Surprise<PlayerScoreResponse, Error>
+	{
+		
+	}
+	
+	@:rest(GoogleApi.SCOPE_GAMES, Rest.URI_GAMES, "POST")
+	@:pathParam("leaderboards")
+	@:pathParam("scores")
+	@:requestBody(PlayerScoreSubmissionList)
+	public static function submitMultiple():Surprise<PlayerScoreResponse, Error>
 	{
 		
 	}
@@ -155,5 +164,19 @@ typedef PlayerScore =
 	timeSpan:String,
 	score:Int,
 	formattedScore:String,
+	scoreTag:String,
+}
+
+typedef PlayerScoreSubmissionList = 
+{
+	kind:String,
+	scores:Array<ScoreSubmission>,
+}
+
+typedef ScoreSubmission = 
+{
+	kind:String,
+	leaderboardId:String,
+	score:Int,
 	scoreTag:String,
 }
