@@ -42,9 +42,6 @@ class GoogleApi
 								handler(Success(s));
 						};
 
-						
-						//tokenHandler = function(s:String) if (debugCallback != null) debugCallback(s);
-
 						#if (android && openfl)
 						googleapi_get_token({handler:tokenHandler}, scope);
 						#else
