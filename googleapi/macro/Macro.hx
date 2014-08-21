@@ -109,19 +109,40 @@ class Macro
 				addFunctionArgument(func, argName, argType, defaultValue);
 				
 				// Add the parameter to the URLVariable
-				varSection.push(macro $p{["variables", argName]} = $i{argName});
+				if (defaultValue != null)
+					varSection.push(macro if($i{argName} != $defaultValue) $p{["variables", argName]} = $i{argName});
+				else
+					varSection.push(macro $p{["variables", argName]} = $i{argName});
 				
 				// Compose the cache index
 				if (cached) indexSection.push(macro indexBuf.push(Std.string($i{argName})));
 			}
+			else if (m.name == ":requestBody")
+			{
+				var bodyType = composeType(getConstantString(m.params[0]));
+				
+				// Create a parameter for the method
+				addFunctionArgument(func, "requestBody", bodyType);
+			}
 		}
 		
 		// the REST-call expr
-		var restCallExpr = method == null ? (macro Rest.call($scope, url, variables)) : (macro Rest.call($scope, url, variables, $method));
+		
+		var restCallExpr = if (varInited)
+		{
+			method == null ? (macro Rest.call($scope, url, variables)) : (macro Rest.call($scope, url, variables, $method));
+		}
+		else
+		{
+			method == null ? (macro Rest.call($scope, url)) : (macro Rest.call($scope, url, null, $method));
+		}
 		
 		// Construct the whole function body
 		if (cached) // if this field is cached, add a if-block to check if the cache already exist
 		{
+			//add a method argument for forcing the method to reload (ignore any caches)
+			addFunctionArgument(func, "forceReload", TPath({pack:[], name:"Bool"}), macro false);
+			
 			var cacheName = getCacheName(field);
 			indexSection.push(macro var index = indexBuf.join("-"));
 			
@@ -133,7 +154,7 @@ class Macro
 			
 			// the if-statement (plus the if-block)
 			for (expr in indexSection) funcBodyBlockExprs.push(expr);
-			funcBodyBlockExprs.push(macro if (!$i{cacheName}.exists(index)) $b{blockExprs});
+			funcBodyBlockExprs.push(macro if (forceReload || !$i{cacheName}.exists(index)) $b{blockExprs});
 			
 			// the return-statement
 			funcBodyBlockExprs.push(macro return $i{cacheName}.get(index));
@@ -265,4 +286,5 @@ class Macro
 			default: null;
 		}
 	}
+	
 }

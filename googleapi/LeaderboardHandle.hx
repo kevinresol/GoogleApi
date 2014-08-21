@@ -1,5 +1,4 @@
 package googleapi;
-import googleapi.rest.Leaderboards.LeaderboardResource;
 import googleapi.rest.Scores;
 using tink.CoreApi;
 
@@ -10,32 +9,68 @@ using tink.CoreApi;
 class LeaderboardHandle
 {
 	public var id(default, null):String;
-	public var pageSize:Int;
-	public var data(get, never):Surprise<LeaderboardResource, Error>;
+	public var collection:ScoresCollection;
+	public var timeSpan:ListTimeSpan;
 	
-	public var pages:Map<Int, Surprise<LeaderboardResource, Error>>;
-	private var tokens:Map<Int, String>;
+	public var pageSize:Int;
+	public var data(get, never):Surprise<Array<LeaderboardEntry>, Error>;
+	
+	
+	public var pages:Map<String, Surprise<Array<LeaderboardEntry>, Error>>;
+	
+	private var tokens:Map<String, String>;
 	private var currentPage:Int = 0;
 	
 
-	public function new(id:String, pageSize:Int = 15) 
+	public function new(id:String, pageSize:Int = 15, collection:ScoresCollection, timeSpan:ListTimeSpan) 
 	{
 		this.id = id;
 		this.pageSize = pageSize;
+		this.collection = collection;
+		this.timeSpan = timeSpan;
 		pages = new Map();
 		tokens = new Map();
 	}
 	
-	public function nextPage():Surprise<LeaderboardResource, Error>
+	public inline function nextPage(forceReload:Bool = false):Surprise<Array<LeaderboardEntry>, Error>
 	{
-		pages[currentPage] = Scores.list(id, 
+		return getPage(currentPage + 1, forceReload);
+	}
+	
+	public inline function prevPage(forceReload:Bool = false):Surprise<Array<LeaderboardEntry>, Error>
+	{
+		return getPage(currentPage - 1, forceReload);
+	}
+	
+	public function getPage(page:Int, forceReload:Bool = false):Surprise<Array<LeaderboardEntry>, Error>
+	{
+		currentPage = page;
+		
+		var index = getIndex(page);
+		var token = tokens.exists(index) ? tokens[index] : "";
+		
+		pages[index] = Scores.list(id, collection, timeSpan, pageSize, token, forceReload).map(function(o)
+		{
+			try
+			{
+				var listResult = o.sure();
+				tokens[getIndex(currentPage - 1)] = listResult.nextPageToken;
+				tokens[getIndex(currentPage + 1)] = listResult.prevPageToken;
+				return Success(listResult.items);
+			}
+			catch (e:Error)
+				return Failure(e);
+		});
 		return data;
 	}
 	
-	private function getIndex(collection:ScoresCollection, timeSpan:ListTimeSpan, 
-	
-	private inline function get_data():Surprise<LeaderboardResource, Error>
+	private inline function getIndex(page:Int):String
 	{
-		return pages[currentPage];
+		return '$collection-$timeSpan-$currentPage';
+	}
+	
+	private inline function get_data():Surprise<Array<LeaderboardEntry>, Error>
+	{
+		return pages[getIndex(currentPage)];
 	}
 }

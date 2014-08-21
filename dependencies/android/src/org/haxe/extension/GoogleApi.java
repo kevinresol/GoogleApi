@@ -156,7 +156,7 @@ public class GoogleApi extends Extension
 			@Override
 			public void onSignInSucceeded() 
 			{
-				trace("come on we succeeded!");
+				trace("signInSucceeded!");
 				mAccountName = Plus.AccountApi.getAccountName(mHelper.getApiClient());
 				
 				// throw it back to haxe
