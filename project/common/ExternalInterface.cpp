@@ -14,8 +14,9 @@
 using namespace googleapi;
 
 AutoGCRoot *mDebugHandler      = 0;
-AutoGCRoot *mAccountNameHander = 0;
+AutoGCRoot *mAccountNameHandler = 0;
 AutoGCRoot *mTokenHandler      = 0;
+
 
 
 static value googleapi_sample_method (value inputValue) {
@@ -33,33 +34,27 @@ static value googleapi_test_google () {
 }
 DEFINE_PRIM (googleapi_test_google, 0);
 
-static value googleapi_init(value accountNameHander, value debugHandler)
+static value googleapi_init(value accountNameHandler, value debugHandler)
 {
-	val_check_function(accountNameHander, 1);
+	val_check_function(accountNameHandler, 1);
 	val_check_function(debugHandler, 1);
 
-	mAccountNameHander = new AutoGCRoot(accountNameHander);
+	mAccountNameHandler = new AutoGCRoot(accountNameHandler);
 	mDebugHandler = new AutoGCRoot(debugHandler);
 
 	//pretend ready
 	const char *readyMessage = "ready";
-	val_call1(mAccountNameHander->get(), alloc_string(readyMessage)); 
+	val_call1(mAccountNameHandler->get(), alloc_string(readyMessage)); 
 	return val_null;
 }
 DEFINE_PRIM(googleapi_init, 2);
 
-static value googleapi_get_token(value tokenHander, value scope)
+static value googleapi_get_token(value tokenHandler, value scope)
 {
-	val_check_function(tokenHander, 1);
-	mTokenHandler = new AutoGCRoot(tokenHander);
-
-	const char *debugMessage = "debugfromexternalinterfacetrue";
-	const char *debugMessage2 = "debugfromexternalinterfacefalse";
-	if(TestGoogle())
-		val_call1(mDebugHandler->get(), alloc_string(debugMessage));
-	else
-		val_call1(mDebugHandler->get(), alloc_string(debugMessage2));
-	Init();
+	val_check_function(tokenHandler, 1);
+	mTokenHandler = new AutoGCRoot(tokenHandler);
+	//getToken(mTokenHandler, val_get_string(scope));
+	getToken(mTokenHandler, val_get_string(scope));
 	return val_null;
 }
 DEFINE_PRIM(googleapi_get_token, 2);

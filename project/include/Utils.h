@@ -7,7 +7,7 @@ namespace googleapi {
 	
 	int SampleMethod(int inputValue);
 	bool TestGoogle();
-	void Init();
+    void getToken(AutoGCRoot * tokenHandler, const char * scope);
 	
 }
 
