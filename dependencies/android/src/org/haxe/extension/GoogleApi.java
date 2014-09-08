@@ -331,7 +331,7 @@ public class GoogleApi extends Extension
 		adView.loadAd(adRequest);
 	}
 	
-	static public void initAd(final String id, final int x, final int y, final boolean testMode) {
+	static public void initAd(final String id, final int x, final int y, final int size, final boolean testMode) {
 		Extension.mainActivity.runOnUiThread(new Runnable() {
 			public void run() {
 				String adID = id;
