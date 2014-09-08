@@ -14,6 +14,7 @@
 	<files id="iphone">
 		<compilerflag value="-Iiphone/include"/>
 		<file name="iphone/GoogleApi.mm"/>
+		<file name="iphone/GAD.mm"/>
 	</files>
 
 	<set name="SLIBEXT" value=".lib" if="windows"/>

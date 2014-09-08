@@ -2,5 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.haxe.extension.googleapi" >
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	
+	<application>
+		<activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"></activity>
+	</application>
 	
 </manifest>
