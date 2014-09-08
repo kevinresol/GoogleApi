@@ -59,7 +59,10 @@ import com.google.android.gms.ads.*;
 	back to Haxe from Java.
 */
 
-	
+/**
+ * admob-related codes are from:
+ * https://github.com/mkorman9/admob-openfl
+ */
 public class GoogleApi extends Extension 
 {
 	

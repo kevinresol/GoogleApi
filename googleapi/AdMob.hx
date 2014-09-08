@@ -2,6 +2,11 @@ package googleapi;
 
 import flash.Lib;
 
+/**
+ * From:
+ * https://github.com/mkorman9/admob-openfl
+ */
+
 class AdMob {
 	public static var LEFT : Int = 0;
 	public static var RIGHT : Int = 1;
