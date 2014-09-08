@@ -38,7 +38,7 @@ class AdMob {
 		
 		// call API
 		if (_initAd_func == null) {
-			_initAd_func = openfl.utils.JNI.createStaticMethod("org.haxe.lime.GameActivity", "initAd",
+			_initAd_func = openfl.utils.JNI.createStaticMethod("org.haxe.extension.GoogleApi", "initAd",
 				"(Ljava/lang/String;IIZ)V", true);
 		}
 
@@ -52,7 +52,7 @@ class AdMob {
 
 	public static function show() : Void {
 		if (_showAd_func == null) {
-			_showAd_func = openfl.utils.JNI.createStaticMethod("org.haxe.lime.GameActivity", "showAd", "()V", true);
+			_showAd_func = openfl.utils.JNI.createStaticMethod("org.haxe.extension.GoogleApi", "showAd", "()V", true);
 		}
 		
 		_showAd_func(new Array<Dynamic>());
@@ -60,7 +60,7 @@ class AdMob {
 	
 	public static function hide() : Void {
 		if (_hideAd_func == null) {
-			_hideAd_func = openfl.utils.JNI.createStaticMethod("org.haxe.lime.GameActivity", "hideAd", "()V", true);
+			_hideAd_func = openfl.utils.JNI.createStaticMethod("org.haxe.extension.GoogleApi", "hideAd", "()V", true);
 		}
 		
 		_hideAd_func(new Array<Dynamic>());
@@ -76,7 +76,7 @@ class AdMob {
 		// call API
 		if (_initInterstitial_func == null) {
 			_initInterstitial_func = openfl.utils.JNI.createStaticMethod(
-				"org.haxe.lime.GameActivity", "initInterstitial", "(Ljava/lang/String;Z)V", true
+				"org.haxe.extension.GoogleApi", "initInterstitial", "(Ljava/lang/String;Z)V", true
 			);
 		}
 
@@ -89,7 +89,7 @@ class AdMob {
 	public static function showInterstitial() : Void {
 		if (_showInterstitial_func == null) {
 			_showInterstitial_func = openfl.utils.JNI.createStaticMethod(
-				"org.haxe.lime.GameActivity", "showInterstitial", "()V", true
+				"org.haxe.extension.GoogleApi", "showInterstitial", "()V", true
 			);
 		}
 

@@ -196,7 +196,7 @@ public class GoogleApi extends Extension
 		mHelper.setup(listener);
 		
 		// Google Ads
-		/*FrameLayout rootLayout = new FrameLayout(Extension.mainActivity); 
+		FrameLayout rootLayout = new FrameLayout(Extension.mainActivity); 
 		adLayout = new RelativeLayout(Extension.mainActivity);
         
         RelativeLayout.LayoutParams adMobLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
@@ -205,7 +205,7 @@ public class GoogleApi extends Extension
         rootLayout.addView(Extension.mainView);
 		rootLayout.addView(adLayout, adMobLayoutParams);
 		
-        Extension.mainActivity.setContentView(rootLayout);*/
+        Extension.mainActivity.setContentView(rootLayout);
 		////////////////////////////////////////////////////////////////////////
 	}
 	
@@ -322,7 +322,7 @@ public class GoogleApi extends Extension
 		}
 	}
 	
-	/*///////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
 	static public void loadAd() {
 		AdRequest adRequest = new AdRequest.Builder().build();
 		adView.loadAd(adRequest);
@@ -426,7 +426,7 @@ public class GoogleApi extends Extension
             }
         });
     }
-	//////////////////////////////////////////////////////////////////////////////////////////*/
+	///////////////////////////////////////////////////////////////////////////////////////////
 	
 	
 }
