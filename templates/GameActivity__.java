@@ -1,5 +1,6 @@
 package org.haxe.lime;
 
+
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -40,15 +41,7 @@ import java.util.List;
 import org.haxe.extension.Extension;
 import org.haxe.HXCPP;
 
-////////////////////////////////////////////////////////////////////////
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
-import android.graphics.Color;
-import com.google.android.gms.ads.*;
-////////////////////////////////////////////////////////////////////////
-
-public class GameActivity extends /*android.support.v4.app.Fragment*/Activity implements SensorEventListener {
+public class GameActivity extends android.support.v4.app.FragmentActivity implements SensorEventListener {
 	
 	
 	private static final int DEVICE_ORIENTATION_UNKNOWN = 0;
@@ -81,21 +74,14 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 	
 	public Handler mHandler;
 	
-	////////////////////////////////////////////////////////////////////////
-	static RelativeLayout adLayout;
-	static RelativeLayout.LayoutParams adMobLayoutParams;
-	static AdView adView;
-	static Boolean adVisible = false, adInitialized = false, adTestMode = false;
-	static InterstitialAd interstitial;
-	////////////////////////////////////////////////////////////////////////
-	
 	private static MainView mMainView;
 	private MainView mView;
 	private Sound _sound;
 	
-	
+
 	protected void onCreate (Bundle state) {
 		
+		requestWindowFeature (Window.FEATURE_NO_TITLE);
 		super.onCreate (state);
 		
 		activity = this;
@@ -109,15 +95,14 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 		Extension.mainContext = this;
 		
 		_sound = new Sound (getApplication ());
-		//getResources().getAssets();
 		
-		requestWindowFeature (Window.FEATURE_NO_TITLE);
 		
 		::if WIN_FULLSCREEN::
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
-				| WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			::if (ANDROID_TARGET_SDK_VERSION < 19)::
+				getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
+					| WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			::end::
 		::end::
-		
 		
 		metrics = new DisplayMetrics ();
 		getWindowManager ().getDefaultDisplay ().getMetrics (metrics);
@@ -126,19 +111,9 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 		System.loadLibrary ("::name::");
 		::end::
 		HXCPP.run ("ApplicationMain");
-
-		////////////////////////////////////////////////////////////////////////
-		FrameLayout rootLayout = new FrameLayout(this); 
-		mView = new MainView(getApplication(), this);
-		adLayout = new RelativeLayout(this);
-        
-        RelativeLayout.LayoutParams adMobLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		
-        rootLayout.addView(mView);
-		rootLayout.addView(adLayout, adMobLayoutParams);
-		
-        setContentView(rootLayout); 
-		////////////////////////////////////////////////////////////////////////
+		mView = new MainView (getApplication (), this);
+		setContentView (mView);
 		
 		Extension.mainView = mView;
 		
@@ -155,7 +130,7 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 		
 		if (extensions == null) {
 			
-			extensions = new ArrayList<Extension>();
+			extensions = new ArrayList<Extension> ();
 			::if (ANDROID_EXTENSIONS != null)::::foreach ANDROID_EXTENSIONS::
 			extensions.add (new ::__current__:: ());::end::::end::
 			
@@ -169,111 +144,32 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 		
 	}
 	
-	////////////////////////////////////////////////////////////////////////
-	static public void loadAd() {
-		AdRequest adRequest = new AdRequest.Builder().build();
-		adView.loadAd(adRequest);
+	// IMMERSIVE MODE SUPPORT
+	::if (WIN_FULLSCREEN)::::if (ANDROID_TARGET_SDK_VERSION >= 19)::
+	
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		
+		if(hasFocus) {
+			hideSystemUi();
+		}
 	}
 	
-	static public void initAd(final String id, final int x, final int y, final boolean testMode) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				String adID = id;
-				adTestMode = testMode;
-				
-				if (activity == null) {
-					return;
-				}
-
-				adView = new AdView(activity);
-				adView.setAdUnitId(adID);
-				adView.setAdSize(AdSize.SMART_BANNER);
-
-				loadAd();
-				adMobLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT); 
-       
-                if(x == 0) {
-					adMobLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                }
-				else if(x == 1) {
-					adMobLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                }
-				else if(x == 2) {
-					adMobLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                }
-				
-				if(y == 0) {
-					adMobLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-				}
-				else if(y == 1) {
-					adMobLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				}
-				else if(y == 2) {
-					adMobLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
-                }
-				
-				adInitialized = true;
-			}
-		});
+	
+	private void hideSystemUi() {
+		View decorView = this.getWindow().getDecorView();
+		
+		decorView.setSystemUiVisibility(
+			View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+			| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+			| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+			| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+			| View.SYSTEM_UI_FLAG_FULLSCREEN
+			| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 	}
 	
-	static public void showAd() {
-		Log.i("GAds", "show");
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				if (adInitialized && !adVisible) {
-					adLayout.removeAllViews();
-					adView.setBackgroundColor(Color.BLACK);
-					adLayout.addView(adView, adMobLayoutParams);
-					adView.setBackgroundColor(0);
-					adVisible = true;
-				}
-			}
-		});
-	}
-        
-	static public void hideAd() {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				if (adInitialized && adVisible) {
-					adLayout.removeAllViews();
-					loadAd();
-					adVisible = false;
-				}
-			}
-		});
-	}
-	
-	static public void loadInterstitial() {
-		AdRequest adRequest = new AdRequest.Builder().build();
-		interstitial.loadAd(adRequest);
-	}
-	
-	static public void initInterstitial(final String id, final boolean testMode) {
-        activity.runOnUiThread(new Runnable() {
-            public void run() {
-				if (activity == null) {
-					return;
-				}
-				
-                interstitial = new InterstitialAd(activity);
-                interstitial.setAdUnitId(id);
-
-                loadInterstitial();
-            }
-        });
-    }
-
-    static public void showInterstitial() {
-        activity.runOnUiThread(new Runnable() {
-            public void run() {
-                if (interstitial.isLoaded()) {
-                    interstitial.show();
-                }
-            }
-        });
-    }
-	///////////////////////////////////////////////////////////////////////////////////////////
+	::end::::end::
 	
 	public static double CapabilitiesGetPixelAspectRatio () {
 		
@@ -333,12 +229,6 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 			
 		}
 		
-		////////////////////////////////////////////////
-		if (adView != null) {
-			adView.pause();
-		}
-		////////////////////////////////////////////////
-		
 	}
 	
 	
@@ -356,12 +246,6 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 			sensorManager.registerListener (this, sensorManager.getDefaultSensor (Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
 			
 		}
-	
-		////////////////////////////////////////////////
-		if (adView != null) {
-			adView.resume();
-		}
-		////////////////////////////////////////////////
 		
 	}
 	
@@ -417,7 +301,7 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 	
 	
 	public static int getResourceID (String inFilename) {
-	
+		
 		//::foreach assets::::if (type == "music")::if (inFilename.equals("::id::")) return ::APP_PACKAGE::.R.raw.::flatName::;
 		//::end::::end::
 		//::foreach assets::::if (type == "sound")::if (inFilename.equals("::id::")) return ::APP_PACKAGE::.R.raw.::flatName::;
@@ -429,7 +313,7 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 	
 	static public String getSpecialDir (int inWhich) {
 		
-		Log.v ("GameActivity", "Get special Dir " + inWhich);
+		//Log.v ("GameActivity", "Get special Dir " + inWhich);
 		File path = null;
 		
 		switch (inWhich) {
@@ -546,6 +430,7 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 		
 	}
 	
+	
 	@Override public void onLowMemory () {
 		
 		super.onLowMemory ();
@@ -570,6 +455,7 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 		super.onNewIntent (intent);
 		
 	}
+	
 	
 	@Override protected void onPause () {
 		
@@ -667,6 +553,8 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 		
 	}
 	
+	
+	::if (ANDROID_TARGET_SDK_VERSION >= 14)::
 	@Override public void onTrimMemory (int level) {
 		
 		super.onTrimMemory (level);
@@ -678,6 +566,8 @@ public class GameActivity extends /*android.support.v4.app.Fragment*/Activity im
 		}
 		
 	}
+	::end::
+	
 	
 	public static void popView () {
 		

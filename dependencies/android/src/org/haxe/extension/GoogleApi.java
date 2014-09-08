@@ -23,6 +23,15 @@ import com.google.example.games.basegameutils.GameHelper;
 import com.google.example.games.basegameutils.GameHelper.GameHelperListener;
 import org.haxe.lime.HaxeObject;
 
+// Google Ads
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
+import android.graphics.Color;
+import com.google.android.gms.ads.*;
+////////////////////////////////////////////////////////////////////////
+
 /* 
 	You can use the Android Extension class in order to hook
 	into the Android activity lifecycle. This is not required
@@ -49,8 +58,18 @@ import org.haxe.lime.HaxeObject;
 	function for performing a single task, like returning a value
 	back to Haxe from Java.
 */
+
+	
 public class GoogleApi extends Extension 
 {
+	
+	// Google Ads
+	static RelativeLayout adLayout;
+	static RelativeLayout.LayoutParams adMobLayoutParams;
+	static AdView adView;
+	static Boolean adVisible = false, adInitialized = false, adTestMode = false;
+	static InterstitialAd interstitial;
+	////////////////////////////////////////////////////////////////////////
 	
 	protected static GameHelper mHelper;	
 	protected static HaxeObject mAccountNameHandler;
@@ -83,6 +102,8 @@ public class GoogleApi extends Extension
 	{
 		mAccountNameHandler = accountNameHandler;
 		mDebugHandler = debugHandler;
+		
+		
 	}
 	
 	public static void getToken(HaxeObject handler, String scope)
@@ -173,6 +194,19 @@ public class GoogleApi extends Extension
 		};
 		mHelper.setPlusApiOptions(PlusOptions.builder().build());
 		mHelper.setup(listener);
+		
+		// Google Ads
+		/*FrameLayout rootLayout = new FrameLayout(Extension.mainActivity); 
+		adLayout = new RelativeLayout(Extension.mainActivity);
+        
+        RelativeLayout.LayoutParams adMobLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		
+		((ViewGroup)Extension.mainView.getParent()).removeView(Extension.mainView);
+        rootLayout.addView(Extension.mainView);
+		rootLayout.addView(adLayout, adMobLayoutParams);
+		
+        Extension.mainActivity.setContentView(rootLayout);*/
+		////////////////////////////////////////////////////////////////////////
 	}
 	
 	
@@ -191,7 +225,8 @@ public class GoogleApi extends Extension
 	 */
 	public void onPause () 
 	{
-		
+		if(adView != null)
+			adView.pause();
 	}
 	
 	
@@ -211,7 +246,8 @@ public class GoogleApi extends Extension
 	 */
 	public void onResume ()
 	{
-		
+		if(adView != null)
+			adView.resume();
 	}
 	
 	
@@ -285,6 +321,112 @@ public class GoogleApi extends Extension
 			}
 		}
 	}
+	
+	/*///////////////////////////////////////////////////////////////////////
+	static public void loadAd() {
+		AdRequest adRequest = new AdRequest.Builder().build();
+		adView.loadAd(adRequest);
+	}
+	
+	static public void initAd(final String id, final int x, final int y, final boolean testMode) {
+		Extension.mainActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				String adID = id;
+				adTestMode = testMode;
+				
+				if (Extension.mainActivity == null) {
+					return;
+				}
+
+				adView = new AdView(Extension.mainActivity);
+				adView.setAdUnitId(adID);
+				adView.setAdSize(AdSize.SMART_BANNER);
+
+				loadAd();
+				adMobLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT); 
+       
+                if(x == 0) {
+					adMobLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                }
+				else if(x == 1) {
+					adMobLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                }
+				else if(x == 2) {
+					adMobLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                }
+				
+				if(y == 0) {
+					adMobLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+				}
+				else if(y == 1) {
+					adMobLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+				}
+				else if(y == 2) {
+					adMobLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+                }
+				
+				adInitialized = true;
+			}
+		});
+	}
+	
+	static public void showAd() {
+		Log.i("GoogleApi", "showAd");
+		Extension.mainActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				if (adInitialized && !adVisible) {
+					adLayout.removeAllViews();
+					adView.setBackgroundColor(Color.BLACK);
+					adLayout.addView(adView, adMobLayoutParams);
+					adView.setBackgroundColor(0);
+					adVisible = true;
+				}
+			}
+		});
+	}
+        
+	static public void hideAd() {
+		Extension.mainActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				if (adInitialized && adVisible) {
+					adLayout.removeAllViews();
+					loadAd();
+					adVisible = false;
+				}
+			}
+		});
+	}
+	
+	static public void loadInterstitial() {
+		AdRequest adRequest = new AdRequest.Builder().build();
+		interstitial.loadAd(adRequest);
+	}
+	
+	static public void initInterstitial(final String id, final boolean testMode) {
+        Extension.mainActivity.runOnUiThread(new Runnable() {
+            public void run() {
+				if (Extension.mainActivity == null) {
+					return;
+				}
+				
+                interstitial = new InterstitialAd(Extension.mainActivity);
+                interstitial.setAdUnitId(id);
+
+                loadInterstitial();
+            }
+        });
+    }
+
+    static public void showInterstitial() {
+        Extension.mainActivity.runOnUiThread(new Runnable() {
+            public void run() {
+                if (interstitial.isLoaded()) {
+                    interstitial.show();
+                }
+            }
+        });
+    }
+	//////////////////////////////////////////////////////////////////////////////////////////*/
 	
 	
 }

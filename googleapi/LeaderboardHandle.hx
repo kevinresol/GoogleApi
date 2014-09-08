@@ -12,7 +12,7 @@ class LeaderboardHandle
 	public var collection:ScoresCollection;
 	public var timeSpan:ListTimeSpan;
 	
-	public var pageSize:Int;
+	public var pageSize(default, null):Int;
 	public var data(get, never):Surprise<Array<LeaderboardEntry>, Error>;
 	
 	
