@@ -18,7 +18,6 @@ AutoGCRoot *mAccountNameHandler = 0;
 AutoGCRoot *mTokenHandler      = 0;
 
 
-
 static value googleapi_sample_method (value inputValue) {
 	
 	int returnValue = SampleMethod(val_int(inputValue));
@@ -26,13 +25,6 @@ static value googleapi_sample_method (value inputValue) {
 	
 }
 DEFINE_PRIM (googleapi_sample_method, 1);
-
-static value googleapi_test_google () {
-	bool r = TestGoogle();
-	if(r) return val_true;
-       	else return val_false;
-}
-DEFINE_PRIM (googleapi_test_google, 0);
 
 static value googleapi_init(value accountNameHandler, value debugHandler)
 {
@@ -42,9 +34,8 @@ static value googleapi_init(value accountNameHandler, value debugHandler)
 	mAccountNameHandler = new AutoGCRoot(accountNameHandler);
 	mDebugHandler = new AutoGCRoot(debugHandler);
 
-	//pretend ready
-	const char *readyMessage = "ready";
-	val_call1(mAccountNameHandler->get(), alloc_string(readyMessage)); 
+	//We don't need the account name on ios, so just let haxe know we are ready here
+	val_call1(mAccountNameHandler->get(), alloc_string("ready")); 
 	return val_null;
 }
 DEFINE_PRIM(googleapi_init, 2);

@@ -14,6 +14,7 @@ using tink.CoreApi;
 
 class GoogleApi 
 {
+	
 	public static inline var SCOPE_GAMES:String = "https://www.googleapis.com/auth/games";
 	
 	public static var debugCallback:String->Void;
@@ -61,7 +62,8 @@ class GoogleApi
 	{
 #if (android && openfl)
 		for (scope in tokenCache.keys())
-		{
+	
+	{
 			tokenCache[scope].handle(function(t) try if (t.sure() == token) invalidateTokenByScope(scope) catch (e:Error) {});
 		}
 #end
@@ -90,9 +92,11 @@ class GoogleApi
 	
 	private static function init():Surprise<Bool, Error>
 	{
+		
 		return Future.async(function(handler)
 		{
-			var accountNameHandler = function(s:String) /* s is accountname if success*/ handler(s.indexOf("failed") != -1 ? Failure(new Error(s)) : Success(true));
+			var accountNameHandler = function(s:String) // s is accountname if success
+				handler(s.indexOf("failed") != -1 ? Failure(new Error(s)) : Success(true));
 			var debugHandler = function(s:String) if (debugCallback != null) debugCallback(s);
 
 			#if (android && openfl)
@@ -103,6 +107,8 @@ class GoogleApi
 			googleapi_init(accountNameHandler, debugHandler);
 			#end
 		});
+		
+		return null;
 	}
 	
 	
@@ -113,4 +119,5 @@ class GoogleApi
 	private static var googleapi_get_token = Lib.load("googleapi", "googleapi_get_token", 2);
 	private static var googleapi_invalidate_token = null;	
 	#end
+	
 }

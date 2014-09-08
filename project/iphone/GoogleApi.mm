@@ -3,6 +3,7 @@
 #import <GoogleOpenSource/GoogleOpenSource.h>
 #include <hx/CFFI.h>
 
+
 @interface NMEAppDelegate:NSObject <UIApplicationDelegate>
 @end
 
@@ -46,7 +47,7 @@ annotation: (id)annotation
 	{
 		//[[GPGManager sharedInstance] signIn];
 		NSLog(@"going to call haxe");
-		NSLog(auth.accessToken);
+		//NSLog(auth.accessToken);
 		val_call1(mTokenHandler->get(), alloc_string(auth.accessToken.UTF8String));
 	}
 }
@@ -66,11 +67,6 @@ namespace googleapi
         return true;
     }
    
-	void init()
-	{
-		[[GPGManager sharedInstance] signInWithClientID:kClientID silently:NO];
-	}
- 
     void getToken(AutoGCRoot * tokenHandler, const char * scope)
 	{
         GPPSignIn *signIn = [GPPSignIn sharedInstance];
