@@ -12,6 +12,7 @@
 	</files>
 	
 	<files id="iphone">
+		<compilerflag value="-Iinclude"/>
 		<compilerflag value="-Iiphone/include"/>
 		<file name="iphone/GoogleApi.mm"/>
 		<file name="iphone/GAD.mm"/>

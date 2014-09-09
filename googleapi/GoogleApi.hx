@@ -108,7 +108,6 @@ class GoogleApi
 			#end
 		});
 		
-		return null;
 	}
 	
 	
