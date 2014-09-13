@@ -30,6 +30,7 @@ class LeaderboardHandle
 		this.timeSpan = timeSpan;
 		pages = new Map();
 		tokens = new Map();
+		getPage(0);
 	}
 	
 	public inline function nextPage(forceReload:Bool = false):Surprise<Array<LeaderboardEntry>, Error>
