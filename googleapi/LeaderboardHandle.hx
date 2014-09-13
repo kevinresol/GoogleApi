@@ -56,7 +56,12 @@ class LeaderboardHandle
 				var listResult = o.sure();
 				tokens[getIndex(currentPage - 1)] = listResult.nextPageToken;
 				tokens[getIndex(currentPage + 1)] = listResult.prevPageToken;
-				return Success(listResult.items);
+				
+				// "items" may not exist, return an empty array instead of null to prevent possible bugs
+				if (listResult.items == null)
+					return Success([]);
+				else
+					return Success(listResult.items);
 			}
 			catch (e:Error)
 				return Failure(e);
