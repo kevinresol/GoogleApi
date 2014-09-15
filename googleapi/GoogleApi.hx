@@ -100,7 +100,7 @@ class GoogleApi
 			var debugHandler = function(s:String) if (debugCallback != null) debugCallback(s);
 
 			#if (android && openfl)
-			var googleapi_init = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "init", "(Lorg/haxe/lime/HaxeObject;Lorg/haxe/lime/HaxeObject;)V");			
+			var googleapi_init = JNI.createStaticMethod ("googleapi.GoogleApi", "init", "(Lorg/haxe/lime/HaxeObject;Lorg/haxe/lime/HaxeObject;)V");			
 			googleapi_init({handler:accountNameHandler}, {handler:debugHandler});
 			#else
 			var googleapi_init = Lib.load("googleapi", "googleapi_init", 2);
@@ -112,8 +112,8 @@ class GoogleApi
 	
 	
 	#if (android && openfl)
-	private static var googleapi_get_token = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "getToken", "(Lorg/haxe/lime/HaxeObject;Ljava/lang/String;)V");
-	private static var googleapi_invalidate_token = JNI.createStaticMethod ("org.haxe.extension.GoogleApi", "invalidateToken", "(Ljava/lang/String;)V");
+	private static var googleapi_get_token = JNI.createStaticMethod ("googleapi.GoogleApi", "getToken", "(Lorg/haxe/lime/HaxeObject;Ljava/lang/String;)V");
+	private static var googleapi_invalidate_token = JNI.createStaticMethod ("googleapi.GoogleApi", "invalidateToken", "(Ljava/lang/String;)V");
 	#else
 	private static var googleapi_get_token = Lib.load("googleapi", "googleapi_get_token", 2);
 	private static var googleapi_invalidate_token = null;	

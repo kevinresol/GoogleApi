@@ -7,7 +7,7 @@
 		<template path="templates/GameActivity.java" rename="src/org/haxe/lime/GameActivity.java" if="android"/>
 		<dependency name="google-play-services" path="dependencies/google-play-services_lib" if="android" />
 		<dependency name="googleapi" path="dependencies/android" if="android" />
-		<android extension="org.haxe.extension.GoogleApi" />
+		<android extension="googleapi.GoogleApi" />
 
 		<template path="templates/iphone" if="ios"/>
 		<ios linker-flags="-ObjC -force_load $SRCROOT/$PRODUCT_NAME/lib/$ARCHS/libgoogleapi.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GooglePlayGames.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GooglePlus.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GoogleOpenSource.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/libGoogleAdMobAds.a"/>

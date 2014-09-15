@@ -78,11 +78,11 @@ class AdMob {
 	#end
 	
 	#if android
-	private static var admob_ad_init = JNI.createStaticMethod("org.haxe.extension.GoogleApi", "initAd", "(Ljava/lang/String;IIIZ)V");
-	private static var admob_ad_show = JNI.createStaticMethod("org.haxe.extension.GoogleApi", "showAd", "()V");
-	private static var admob_ad_hide = JNI.createStaticMethod("org.haxe.extension.GoogleApi", "hideAd", "()V");
-	private static var admob_ad_init_interstitial = JNI.createStaticMethod("org.haxe.extension.GoogleApi", "initInterstitial", "(Ljava/lang/String;Z)V");
-	private static var admob_ad_show_interstitial = JNI.createStaticMethod("org.haxe.extension.GoogleApi", "showInterstitial", "()V");
+	private static var admob_ad_init = JNI.createStaticMethod("googleapi.GoogleApi", "initAd", "(Ljava/lang/String;IIIZ)V");
+	private static var admob_ad_show = JNI.createStaticMethod("googleapi.GoogleApi", "showAd", "()V");
+	private static var admob_ad_hide = JNI.createStaticMethod("googleapi.GoogleApi", "hideAd", "()V");
+	private static var admob_ad_init_interstitial = JNI.createStaticMethod("googleapi.GoogleApi", "initInterstitial", "(Ljava/lang/String;Z)V");
+	private static var admob_ad_show_interstitial = JNI.createStaticMethod("googleapi.GoogleApi", "showInterstitial", "()V");
 	#end
 
 }
