@@ -19,6 +19,7 @@ import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.example.games.basegameutils.GameHelper;
 import com.google.example.games.basegameutils.GameHelper.GameHelperListener;
 import org.haxe.lime.HaxeObject;
@@ -93,21 +94,15 @@ public class GoogleApi extends Extension
 	private static final int USER_RECOVERABLE_AUTH = 5;
 	private static final int ACCOUNT_PICKER = 2;
 	
-	public static int sampleMethod (int inputValue) 
+	public static GoogleApiClient getApiClient()
 	{
-		
-		//Games.Leaderboards.submitScore(mHelper.getApiClient(), "CgkI-dP3tMUNEAIQAQ", 12345);
-		//mHelper.beginUserInitiatedSignIn();
-		return inputValue * 100;
-		
+		return mHelper.getApiClient();
 	}
 	
 	public static void init(HaxeObject accountNameHandler, HaxeObject debugHandler)
 	{
 		mAccountNameHandler = accountNameHandler;
 		mDebugHandler = debugHandler;
-		
-		
 	}
 	
 	public static void getToken(HaxeObject handler, String scope)

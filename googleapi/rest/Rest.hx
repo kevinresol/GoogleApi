@@ -14,6 +14,7 @@ using tink.CoreApi;
 class Rest
 {
 	public static inline var URI_GAMES:String = "https://www.googleapis.com/games/v1";
+	public static inline var URI_GAMES_MANAGEMENT:String = "https://www.googleapis.com/games/v1management";
 	
 	public static function callRaw(scope:String, url:String, ?variables:URLVariables, method:String = "GET"):Surprise<String, Error>
 	{
@@ -48,7 +49,13 @@ class Rest
 		return callRaw(scope, url, variables, method).map(function(outcome)
 		{
 			try
-				return Success(Json.parse(outcome.sure()))
+			{
+				var response = outcome.sure();
+				if (response == "")
+					return Success(null);
+				else
+					return Success(Json.parse(response));
+			}
 			catch (e:Error)
 				return Failure(e);
 		});
