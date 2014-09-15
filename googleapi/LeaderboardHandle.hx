@@ -14,6 +14,8 @@ class LeaderboardHandle
 	
 	public var pageSize(default, null):Int;
 	public var data(get, never):Surprise<Array<LeaderboardEntry>, Error>;
+	public var hasNextPage(get, never):Bool;
+	public var hasPrevPage(get, never):Bool;
 	
 	
 	public var pages:Map<String, Surprise<Array<LeaderboardEntry>, Error>>;
@@ -48,15 +50,15 @@ class LeaderboardHandle
 		currentPage = page;
 		
 		var index = getIndex(page);
-		var token = tokens.exists(index) ? tokens[index] : "";
+		var token = (page == 0 || !tokens.exists(index)) ? "" : tokens[index];
 		
-		pages[index] = Scores.list(id, collection, timeSpan, pageSize, token, forceReload).map(function(o)
+		return pages[index] = Scores.list(id, collection, timeSpan, pageSize, token, forceReload).map(function(o)
 		{
 			try
 			{
 				var listResult = o.sure();
-				tokens[getIndex(currentPage - 1)] = listResult.nextPageToken;
-				tokens[getIndex(currentPage + 1)] = listResult.prevPageToken;
+				tokens[getIndex(currentPage + 1)] = listResult.nextPageToken;
+				tokens[getIndex(currentPage - 1)] = listResult.prevPageToken;
 				
 				// "items" may not exist, return an empty array instead of null to prevent possible bugs
 				if (listResult.items == null)
@@ -67,12 +69,21 @@ class LeaderboardHandle
 			catch (e:Error)
 				return Failure(e);
 		});
-		return data;
 	}
 	
 	private inline function getIndex(page:Int):String
 	{
-		return '$collection-$timeSpan-$currentPage';
+		return '$collection-$timeSpan-$page';
+	}
+	
+	private inline function get_hasNextPage():Bool
+	{
+		return tokens[getIndex(currentPage+1)] != null;
+	}
+	
+	private inline function get_hasPrevPage():Bool
+	{
+		return tokens[getIndex(currentPage-1)] != null;
 	}
 	
 	private inline function get_data():Surprise<Array<LeaderboardEntry>, Error>
