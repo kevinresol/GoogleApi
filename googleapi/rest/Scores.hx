@@ -53,7 +53,7 @@ class Scores
 	}
 	
 	@:rest(GoogleApi.SCOPE_GAMES, Rest.URI_GAMES, "POST")
-	@:pathParam("leaderboards", "leaderboardId", String)
+	@:pathParam("leaderboards", leaderboardId, String)
 	@:pathParam("scores")
 	@:queryParam("score", Int)
 	@:queryParam("scoreTag", String, "")
