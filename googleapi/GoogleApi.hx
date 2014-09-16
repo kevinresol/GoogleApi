@@ -93,6 +93,7 @@ class GoogleApi
 	
 	private static function init():Surprise<Bool, Error>
 	{
+		var id = Macro.getID();
 		return Future.async(function(handler)
 		{
 			var accountNameHandler = function(s:String) // s is accountname if success

@@ -3,6 +3,8 @@
 	<section unless="display">
 		<ndll name="googleapi" />
 		
+		<template path="templates/id.txt" rename="id.txt"/>
+		
 		<!-- Use the following for an Android Java extension, not needed otherwise -->
 		<template path="templates/GameActivity.java" rename="src/org/haxe/lime/GameActivity.java" if="android"/>
 		<dependency name="google-play-services" path="dependencies/google-play-services_lib" if="android" />
