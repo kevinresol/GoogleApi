@@ -5,7 +5,7 @@ using tink.CoreApi;
  * ...
  * @author ...
  */
-@:build(googleapi.macro.Macro.build())
+@:build(googleapi.macro.BuildMacro.build())
 class Achievements
 {
 	@:rest(GoogleApi.SCOPE_GAMES, Rest.URI_GAMES, "POST")

@@ -6,7 +6,7 @@ using tink.CoreApi;
  * https://developers.google.com/games/services/web/api/scores/get
  * @author Kevin
  */
-@:build(googleapi.macro.Macro.build())
+@:build(googleapi.macro.BuildMacro.build())
 class Scores
 {
 	/**

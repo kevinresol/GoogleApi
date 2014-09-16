@@ -1,4 +1,5 @@
 package googleapi ;
+import googleapi.macro.Macro;
 
 #if cpp
 import cpp.Lib;
@@ -92,7 +93,6 @@ class GoogleApi
 	
 	private static function init():Surprise<Bool, Error>
 	{
-		
 		return Future.async(function(handler)
 		{
 			var accountNameHandler = function(s:String) // s is accountname if success
