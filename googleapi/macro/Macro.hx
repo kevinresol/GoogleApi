@@ -20,7 +20,6 @@ class Macro
 		i.close();
 		#end
 		
-		trace(id);
 		return macro $v{id};
 	}
 	

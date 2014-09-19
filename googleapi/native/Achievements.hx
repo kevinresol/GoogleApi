@@ -45,7 +45,7 @@ class Achievements
 	
 	#if ios
 	private static var _increment = null;
-	private static var _unlock = null;
+	private static var _unlock = Lib.load("googleapi","achievements_unlock",1);
 	private static var _reveal = null;
 	private static var _setSteps = null;
 	#end

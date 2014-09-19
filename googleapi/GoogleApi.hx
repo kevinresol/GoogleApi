@@ -47,6 +47,7 @@ class GoogleApi
 						#if (android && openfl)
 						googleapi_get_token({handler:tokenHandler}, scope);
 						#else
+						trace("call cpp get_token");
 						debugCallback("call cpp get_token");
 						googleapi_get_token(tokenHandler, scope);
 						#end
@@ -93,7 +94,6 @@ class GoogleApi
 	
 	private static function init():Surprise<Bool, Error>
 	{
-		var id = Macro.getID();
 		return Future.async(function(handler)
 		{
 			var accountNameHandler = function(s:String) // s is accountname if success
@@ -104,8 +104,10 @@ class GoogleApi
 			var googleapi_init = JNI.createStaticMethod ("googleapi.GoogleApi", "init", "(Lorg/haxe/lime/HaxeObject;Lorg/haxe/lime/HaxeObject;)V");			
 			googleapi_init({handler:accountNameHandler}, {handler:debugHandler});
 			#else
-			var googleapi_init = Lib.load("googleapi", "googleapi_init", 2);
-			googleapi_init(accountNameHandler, debugHandler);
+			var googleapi_init = Lib.load("googleapi", "googleapi_init", 3);
+			trace(Macro.getID());
+			googleapi_init(accountNameHandler, debugHandler, Macro.getID());
+			trace(2);
 			#end
 		});
 		

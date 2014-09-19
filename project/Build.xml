@@ -15,7 +15,10 @@
 		<compilerflag value="-Iinclude"/>
 		<compilerflag value="-Iiphone/include"/>
 		<file name="iphone/GoogleApi.mm"/>
+		<file name="iphone/SignInDelegate.mm"/>
+		<file name="iphone/NMEAppDelegate.mm"/>
 		<file name="iphone/GAD.mm"/>
+		<file name="iphone/Achievements.mm"/>
 	</files>
 
 	<set name="SLIBEXT" value=".lib" if="windows"/>

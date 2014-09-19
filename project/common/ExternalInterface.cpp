@@ -10,6 +10,7 @@
 #include <hx/CFFI.h>
 #include "Utils.h"
 #include "AD.h"
+#include "Achievements.h"
 
 
 using namespace googleapi;
@@ -17,6 +18,7 @@ using namespace googleapi;
 AutoGCRoot *mDebugHandler      = 0;
 AutoGCRoot *mAccountNameHandler = 0;
 AutoGCRoot *mTokenHandler      = 0;
+const char *mClientId;
 
 
 static value googleapi_sample_method (value inputValue) {
@@ -27,26 +29,29 @@ static value googleapi_sample_method (value inputValue) {
 }
 DEFINE_PRIM (googleapi_sample_method, 1);
 
-static value googleapi_init(value accountNameHandler, value debugHandler)
+static value googleapi_init(value accountNameHandler, value debugHandler, value clientId)
 {
 	val_check_function(accountNameHandler, 1);
 	val_check_function(debugHandler, 1);
 
 	mAccountNameHandler = new AutoGCRoot(accountNameHandler);
 	mDebugHandler = new AutoGCRoot(debugHandler);
-
+	mClientId = val_string(clientId);
+	signInGames(mClientId);	
 	//We don't need the account name on ios, so just let haxe know we are ready here
-	val_call1(mAccountNameHandler->get(), alloc_string("ready")); 
+	val_call1(mAccountNameHandler->get(), alloc_string(mClientId)); 
 	return val_null;
 }
-DEFINE_PRIM(googleapi_init, 2);
+DEFINE_PRIM(googleapi_init, 3);
 
 static value googleapi_get_token(value tokenHandler, value scope)
 {
 	val_check_function(tokenHandler, 1);
+	val_call1(mDebugHandler->get(),alloc_string("pre"));
 	mTokenHandler = new AutoGCRoot(tokenHandler);
+	val_call1(mDebugHandler->get(),alloc_string("post"));
 	//getToken(mTokenHandler, val_get_string(scope));
-	getToken(mTokenHandler, val_get_string(scope));
+	getToken(mClientId, mTokenHandler, val_get_string(scope));
 	return val_null;
 }
 DEFINE_PRIM(googleapi_get_token, 2);
@@ -99,3 +104,10 @@ value admob_ad_show_interstitial() {
 	return alloc_null();
 }
 DEFINE_PRIM(admob_ad_show_interstitial, 0);
+
+// Games Achievements
+value achievements_unlock(value id) { 
+	unlock(val_string(id));
+	return alloc_null();
+}
+DEFINE_PRIM(achievements_unlock, 1);
