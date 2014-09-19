@@ -26,7 +26,7 @@ namespace googleapi {
 		else
 			NSLog(@"gpg not signed in");
 
-		return;
+		
 		[[GPGAchievement achievementWithId:achievementId] unlockAchievementWithCompletionHandler:^(BOOL newlyUnlocked, NSError *error) {
 			if(error) 
 			{

@@ -18,19 +18,21 @@ namespace googleapi
 		signIn.shouldFetchGoogleUserID = YES;
 		signIn.clientID = [[NSString alloc] initWithUTF8String:clientId];
 		signIn.scopes = @[kGTLAuthScopePlusLogin, [[NSString alloc] initWithUTF8String:scope]];
-		signIn.delegate = [[SignInDelegate alloc] initWithSignIn:signIn andTokenHandler:tokenHandler];
+		//signIn.delegate = [[SignInDelegate alloc] initWithSignIn:signIn andTokenHandler:tokenHandler];
 		if(![signIn trySilentAuthentication])
 			[signIn authenticate];
     }
 	
-	void signInGames(const char *clientId)
+	void signInGames(const char *clientId, AutoGCRoot *handler)
 	{
-		NSLog(@"signInGames");
-		GPGManager *m = [GPGManager sharedInstance];
-		m.statusDelegate = [[SignInDelegate alloc] init];
-		NSString *cid = [[NSString alloc] initWithUTF8String:clientId];
-		if(![m signInWithClientID:cid silently:YES])
-			[m signInWithClientID:cid silently:NO];
-		NSLog(@"signInGames2");
+        GPPSignIn *signIn = [GPPSignIn sharedInstance];
+		signIn.shouldFetchGoogleUserID = YES;
+		signIn.clientID = [[NSString alloc] initWithUTF8String:clientId];
+		signIn.scopes = @[kGTLAuthScopePlusLogin, @"https://www.googleapis.com/auth/games"];
+		signIn.delegate = [[SignInDelegate alloc] initWithSignIn:signIn andCompletionHandler:^(GTMOAuth2Authentication* auth, NSError* error) {
+			val_call1(handler->get(), alloc_string("done"));
+		}];
+		if(![signIn trySilentAuthentication])
+			[signIn authenticate];
 	}
 }

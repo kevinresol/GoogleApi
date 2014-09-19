@@ -5,11 +5,9 @@
 #include <SignInDelegate.h>
 
 @implementation SignInDelegate
-- (SignInDelegate* )initWithSignIn:(GPPSignIn *) signInObject
-	andTokenHandler:(AutoGCRoot *) tokenHandler
-{
+- (SignInDelegate* )initWithSignIn:(GPPSignIn *) signInObject andCompletionHandler:(void(^)(GTMOAuth2Authentication*, NSError*)) handler {
 	signIn = signInObject;
-	mTokenHandler = tokenHandler;
+	completionHandler = [handler copy];
 	return [super init];
 }
 
@@ -23,10 +21,11 @@
 	}
 	else
 	{
+		_auth = auth;
+		[GPGManager sharedInstance].statusDelegate = self;
 		[[GPGManager sharedInstance] signIn];
-		NSLog(@"going to call haxe");
 		//NSLog(auth.accessToken);
-		val_call1(mTokenHandler->get(), alloc_string(auth.accessToken.UTF8String));
+		//val_call1(mTokenHandler->get(), alloc_string(auth.accessToken.UTF8String));
 	}
 }
 
@@ -35,7 +34,9 @@
         NSLog(@"Received an error while signing in %@", [error localizedDescription]);
 
     } else {
-        NSLog(@"Signed in!");
+        NSLog(@"GPG justSigned in!");
+		NSLog(@"going to callback");
+		completionHandler(_auth, error);
     }
 }
 - (void)didFinishGoogleAuthWithError:(NSError *)error {
@@ -43,7 +44,9 @@
         NSLog(@"Received an error while googleAuth %@", [error localizedDescription]);
 
     } else {
-        NSLog(@"Signed in!");
+        NSLog(@"G{G Signed in (Auth)!");
+		NSLog(@"going to callback");
+		completionHandler(_auth, error);
     }
 }
 

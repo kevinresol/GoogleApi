@@ -6,9 +6,10 @@
 @interface SignInDelegate:NSObject<GPPSignInDelegate, GPGStatusDelegate>
 {
 	GPPSignIn *signIn;
-	AutoGCRoot *mTokenHandler;
+	GTMOAuth2Authentication *_auth;
+	void (^completionHandler)(GTMOAuth2Authentication *auth, NSError *error);
 }
-- (SignInDelegate *)initWithSignIn:(GPPSignIn *) signInObject andTokenHandler:(AutoGCRoot*) tokenHandler;
+- (SignInDelegate *)initWithSignIn:(GPPSignIn *) signInObject andCompletionHandler:(void(^)(GTMOAuth2Authentication*, NSError*)) handler;
 
 
 @end
