@@ -17,6 +17,7 @@
     NSLog(@"Received error %@ and auth object %@",error, auth);
 	if(error != nil)
 	{
+		NSLog(@"Re-auth");
 		[signIn authenticate];
 	}
 	else

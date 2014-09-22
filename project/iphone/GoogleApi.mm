@@ -6,19 +6,15 @@
 
 namespace googleapi 
 {
-	
-	bool TestGoogle()
-    {
-        return true;
-    }
-   
-    void getToken(const char *clientId, AutoGCRoot * tokenHandler, const char * scope)
+    void getToken(const char *clientId, AutoGCRoot * handler, const char * scope)
 	{
         GPPSignIn *signIn = [GPPSignIn sharedInstance];
 		signIn.shouldFetchGoogleUserID = YES;
 		signIn.clientID = [[NSString alloc] initWithUTF8String:clientId];
-		signIn.scopes = @[kGTLAuthScopePlusLogin, [[NSString alloc] initWithUTF8String:scope]];
-		//signIn.delegate = [[SignInDelegate alloc] initWithSignIn:signIn andTokenHandler:tokenHandler];
+		signIn.scopes = @[[[NSString alloc] initWithUTF8String:scope]];
+		signIn.delegate = [[SignInDelegate alloc] initWithSignIn:signIn andCompletionHandler:^(GTMOAuth2Authentication* auth, NSError* error) {
+			val_call1(handler->get(),  alloc_string(auth.accessToken.UTF8String));
+		}];
 		if(![signIn trySilentAuthentication])
 			[signIn authenticate];
     }

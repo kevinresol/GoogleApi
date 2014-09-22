@@ -15,9 +15,7 @@
 
 using namespace googleapi;
 
-AutoGCRoot *mDebugHandler      = 0;
-AutoGCRoot *mAccountNameHandler = 0;
-AutoGCRoot *mTokenHandler      = 0;
+AutoGCRoot *mDebugHandler = 0;
 const char *mClientId;
 
 
@@ -29,17 +27,14 @@ static value googleapi_sample_method (value inputValue) {
 }
 DEFINE_PRIM (googleapi_sample_method, 1);
 
-static value googleapi_init(value accountNameHandler, value debugHandler, value clientId)
+static value googleapi_init(value readyHandler, value debugHandler, value clientId)
 {
-	val_check_function(accountNameHandler, 1);
+	val_check_function(readyHandler, 1);
 	val_check_function(debugHandler, 1);
 
-	mAccountNameHandler = new AutoGCRoot(accountNameHandler);
 	mDebugHandler = new AutoGCRoot(debugHandler);
 	mClientId = val_string(clientId);
-	signInGames(mClientId, mAccountNameHandler);	
-	//We don't need the account name on ios, so just let haxe know we are ready here
-	//val_call1(mAccountNameHandler->get(), alloc_string(mClientId)); 
+	signInGames(mClientId, new AutoGCRoot(readyHandler));	
 	return val_null;
 }
 DEFINE_PRIM(googleapi_init, 3);
@@ -47,9 +42,7 @@ DEFINE_PRIM(googleapi_init, 3);
 static value googleapi_get_token(value tokenHandler, value scope)
 {
 	val_check_function(tokenHandler, 1);
-	mTokenHandler = new AutoGCRoot(tokenHandler);
-	//getToken(mTokenHandler, val_get_string(scope));
-	getToken(mClientId, mTokenHandler, val_get_string(scope));
+	getToken(mClientId, new AutoGCRoot(tokenHandler), val_get_string(scope));
 	return val_null;
 }
 DEFINE_PRIM(googleapi_get_token, 2);
