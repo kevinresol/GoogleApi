@@ -38,6 +38,7 @@
         NSLog(@"GPG justSigned in!");
 		NSLog(@"going to callback");
 		completionHandler(_auth, error);
+		[completionHandler release];
     }
 }
 - (void)didFinishGoogleAuthWithError:(NSError *)error {
@@ -48,6 +49,7 @@
         NSLog(@"G{G Signed in (Auth)!");
 		NSLog(@"going to callback");
 		completionHandler(_auth, error);
+		[completionHandler release];
     }
 }
 

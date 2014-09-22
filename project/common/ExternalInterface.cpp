@@ -19,13 +19,6 @@ AutoGCRoot *mDebugHandler = 0;
 const char *mClientId;
 
 
-static value googleapi_sample_method (value inputValue) {
-	
-	int returnValue = SampleMethod(val_int(inputValue));
-	return alloc_int(returnValue);
-	
-}
-DEFINE_PRIM (googleapi_sample_method, 1);
 
 static value googleapi_init(value readyHandler, value debugHandler, value clientId)
 {
@@ -102,3 +95,21 @@ value achievements_unlock(value id) {
 	return alloc_null();
 }
 DEFINE_PRIM(achievements_unlock, 1);
+
+value achievements_increment(value id, value numSteps) { 
+	increment(val_string(id), val_int(numSteps));
+	return alloc_null();
+}
+DEFINE_PRIM(achievements_increment, 2);
+
+value achievements_setSteps(value id, value numSteps) { 
+	setSteps(val_string(id), val_int(numSteps));
+	return alloc_null();
+}
+DEFINE_PRIM(achievements_setSteps, 2);
+
+value achievements_reveal(value id) { 
+	reveal(val_string(id));
+	return alloc_null();
+}
+DEFINE_PRIM(achievements_reveal, 1);
