@@ -70,6 +70,24 @@ class Scores
 	{
 		
 	}
+	
+	@:rest(GoogleApi.SCOPE_GAMES, Rest.URI_GAMES_MANAGEMENT, "POST")
+	@:pathParam("leaderboards", leaderboardId, String)
+	@:pathParam("scores")
+	@:pathParam("reset")
+	public static function reset():Surprise<PlayerScoreResetResponse, Error>
+	{
+		
+	}
+	
+	@:rest(GoogleApi.SCOPE_GAMES, Rest.URI_GAMES_MANAGEMENT, "POST")
+	@:pathParam("leaderboards", leaderboardId, String)
+	@:pathParam("scores")
+	@:pathParam("resetForAllPlayers")
+	public static function resetForAllPlayers():Surprise<Noise, Error>
+	{
+		
+	}
 }
 
 @:enum
@@ -179,4 +197,10 @@ typedef ScoreSubmission =
 	leaderboardId:String,
 	score:Int,
 	scoreTag:String,
+}
+
+typedef PlayerScoreResetResponse = 
+{
+	kind:String,
+	resetScoreTimeSpans:Array<String>,
 }
