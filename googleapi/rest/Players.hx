@@ -39,38 +39,33 @@ abstract PlayerCollection(String)
 
 typedef PlayerListResponse = 
 {
-	kind:String,
+	kind:String, // "games#playerListResponse"
 	nextPageToken:String,
 	items:Array<Player>,
 }
 
 typedef Player = 
 {
-	kind:String,
+	kind:String, // "games#player"
 	playerId:String,
 	displayName:String,
 	avatarImageUrl:String,
 	lastPlayedWith:Played,
-	name:PlayerName,
+	name:{familyName:String, givenName:String},
 	experienceInfo:PlayerExperienceInfo,
 	title:String,
 }
 
-typedef PlayerName = 
-{
-	familyName:String, 
-	givenName:String
-}
-
 typedef Played = 
 {
-	kind:String,
+	kind:String, // "games#played"
 	timeMillis:Int,
 	autoMatched:Bool,
 }
 
 typedef PlayerExperienceInfo = 
 {
+	kind:String, // "games#playerExperienceInfo"
 	currentExperiencePoints:Int,
 	lastLevelUpTimestampMillis:Int,
 	currentLevel:PlayerLevel,
@@ -79,7 +74,7 @@ typedef PlayerExperienceInfo =
 
 typedef PlayerLevel = 
 {
-	kind:String,
+	kind:String, // "games#playerLevel"
 	level:Int,
 	minExperiencePoints:Int,
 	maxExperiencePoints:Int,

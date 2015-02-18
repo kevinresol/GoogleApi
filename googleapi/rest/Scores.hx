@@ -66,7 +66,7 @@ class Scores
 	@:pathParam("leaderboards")
 	@:pathParam("scores")
 	@:requestBody(PlayerScoreSubmissionList)
-	public static function submitMultiple():Surprise<PlayerScoreResponse, Error>
+	public static function submitMultiple():Surprise<PlayerScoreListResponse, Error>
 	{
 		
 	}
@@ -116,7 +116,7 @@ abstract ScoresCollection(String)
 
 typedef PlayerLeaderboardScoreListResponse = 
 {
-	kind:String,
+	kind:String, // "games#playerLeaderboardScoreListResponse"
 	nextPageToken:String,
 	player:Players.Player,
 	items:Array<PlayerLeaderboardScore>,
@@ -124,7 +124,7 @@ typedef PlayerLeaderboardScoreListResponse =
 
 typedef PlayerLeaderboardScore =
 {
-	kind:String,
+	kind:String, // "games#playerLeaderboardScore"
 	leaderboard_id:String,
 	scoreValue:Int,
 	scoreString:String,
@@ -137,7 +137,7 @@ typedef PlayerLeaderboardScore =
 
 typedef LeaderboardScoreRank = 
 {
-	kind:String,
+	kind:String, // "games#leaderboardScoreRank"
 	rank:Int,
 	formattedRank:String,
 	numScores:Int,
@@ -146,7 +146,7 @@ typedef LeaderboardScoreRank =
 
 typedef LeaderboardScores = 
 {
-	kind:String,
+	kind:String, // "games#leaderboardScores"
 	nextPageToken:String,
 	prevPageToken:String,
 	numScores:Int,
@@ -156,7 +156,7 @@ typedef LeaderboardScores =
 
 typedef LeaderboardEntry =
 {
-	kind:String,
+	kind:String, // "games#leaderboardEntry"
 	player:Players.Player,
 	scoreRank:Int,
 	formattedScoreRank:String,
@@ -169,6 +169,7 @@ typedef LeaderboardEntry =
 
 typedef PlayerScoreResponse = 
 {
+	kind:String, // "games#playerScoreResponse"
 	beatenScoreTimeSpans:Array<String>,
 	unbeatenScores:Array<PlayerScore>,
 	formattedScore:String,
@@ -178,7 +179,7 @@ typedef PlayerScoreResponse =
 
 typedef PlayerScore = 
 {
-	kind:String,
+	kind:String, // "games#playerScore"
 	timeSpan:String,
 	score:Int,
 	formattedScore:String,
@@ -187,13 +188,19 @@ typedef PlayerScore =
 
 typedef PlayerScoreSubmissionList = 
 {
-	kind:String,
+	kind:String,// "games#playerScoreSubmissionList"
 	scores:Array<ScoreSubmission>,
+}
+
+typedef PlayerScoreListResponse =
+{
+	kind:String, // "games#playerScoreListResponse"
+	submittedScores:Array<PlayerScoreResponse>
 }
 
 typedef ScoreSubmission = 
 {
-	kind:String,
+	kind:String, // "games#scoreSubmission"
 	leaderboardId:String,
 	score:Int,
 	scoreTag:String,

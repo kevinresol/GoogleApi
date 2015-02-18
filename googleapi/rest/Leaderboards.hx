@@ -33,7 +33,7 @@ class Leaderboards
  */
 typedef Leaderboard =
 {
-	kind:String,
+	kind:String, // "games#leaderboard"
 	id:String,
 	name:String,
 	iconUrl:String,
@@ -46,7 +46,7 @@ typedef Leaderboard =
  */
 typedef LeaderboardListResponse = 
 {
-	kind:String,
+	kind:String, // "games#leaderboardListResponse"
 	nextPageToken:String,
 	items:Array<Leaderboard>,
 }
