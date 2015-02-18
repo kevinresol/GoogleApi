@@ -1,3 +1,4 @@
 project/iphone/include/* linguist-vendored
 project/iphone/include/NMEAppDelegate.h linguist-vendored=false
 project/iphone/include/SignInDelegate.h linguist-vendored=false
+dependencies/google-play-services_lib/* linguist-vendored
