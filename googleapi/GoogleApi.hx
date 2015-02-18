@@ -20,7 +20,7 @@ class GoogleApi
 	
 	private static var inited:Bool = false;
 	
-	public static var token:Null<Surprise<AccessToken, Error>>;
+	public static var token(get, null):Null<Surprise<AccessToken, Error>>;
 	
 	/**
 	 * Call this method at the beginning of 
@@ -37,7 +37,7 @@ class GoogleApi
 		
 		if (extraScopes != null)
 			scopes = scopes.concat(extraScopes);
-			
+		
 		return token = Future.async(function(handler)
 		{
 			#if (android && openfl)
@@ -46,7 +46,6 @@ class GoogleApi
 			googleapi_authenticate(scopes.join(" "), onAuthenticateResult.bind(handler));
 			#end
 		});
-		
 	}
 	private static function init():Void
 	{
@@ -67,6 +66,14 @@ class GoogleApi
 			handler(Success(new AccessToken(result.scopes.split(" "), result.accessToken)));
 		else
 			handler(Failure(new Error(Std.string(result.error))));
+	}
+	
+	private static function get_token()
+	{
+		if (token == null)
+			authenticate();
+			
+		return token;
 	}
 	
 	

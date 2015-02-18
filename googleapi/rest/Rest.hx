@@ -18,10 +18,7 @@ class Rest
 	
 	public static function callRaw(scope:String, url:String, ?variables:URLVariables, method:String = "GET"):Surprise<String, Error>
 	{
-		if (GoogleApi.token == null)
-			return GoogleApi.authenticate().flatMap(tokenNext.bind(_, scope, url, variables, method));
-		else
-			return GoogleApi.token.flatMap(tokenNext.bind(_, scope, url, variables, method));
+		return GoogleApi.token.flatMap(tokenNext.bind(_, scope, url, variables, method));
 	}
 	
 	public static function call<T>(scope:String, url:String, ?variables:URLVariables, method:String = "GET"):Surprise<T, Error>
