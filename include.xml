@@ -12,7 +12,13 @@
 		<android extension="googleapi.GoogleApi" />
 
 		<template path="templates/iphone" if="ios"/>
-		<ios linker-flags="-ObjC -force_load $SRCROOT/$PRODUCT_NAME/lib/$ARCHS/libgoogleapi.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GooglePlayGames.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GooglePlus.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GoogleOpenSource.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/libGoogleAdMobAds.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/libcurl.a"/>
+		<template path="dependencies/iphone/libcurl.a" rename="lib/libcurl.a" if="ios" />
+		<template path="dependencies/iphone/libGoogleAdMobAds.a" rename="lib/libGoogleAdMobAds.a" if="ios" />
+		<template path="dependencies/iphone/GooglePlayGames.framework/Versions/A/GooglePlayGames" rename="lib/GooglePlayGames.a" if="ios" />
+		<template path="dependencies/iphone/GooglePlus.framework/Versions/A/GooglePlus" rename="lib/GooglePlus.a" if="ios" />
+		<template path="dependencies/iphone/GoogleOpenSource.framework/Versions/A/GoogleOpenSource" rename="lib/GoogleOpenSource.a" if="ios" />
+
+		<ios linker-flags="-ObjC -force_load $SRCROOT/$PRODUCT_NAME/lib/$ARCHS/libgoogleapi.a -force_load $SRCROOT/$PRODUCT_NAME/lib/GooglePlayGames.a -force_load $SRCROOT/$PRODUCT_NAME/lib/GooglePlus.a -force_load $SRCROOT/$PRODUCT_NAME/lib/GoogleOpenSource.a -force_load $SRCROOT/$PRODUCT_NAME/lib/libGoogleAdMobAds.a -force_load $SRCROOT/$PRODUCT_NAME/lib/libcurl.a"/>
 		<dependency name="AddressBook.framework" if="ios" />
 		<dependency name="AdSupport.framework" if="ios" />
 		<dependency name="AssetsLibrary.framework" if="ios" />
@@ -27,11 +33,11 @@
 		<dependency name="Security.framework" if="ios" />
 		<dependency name="StoreKit.framework" if="ios" />
 		<dependency name="SystemConfiguration.framework" if="ios" />
-		<!--<dependency path="dependencies/iphone/GooglePlayGames.framework" if="ios"/>
-		<dependency path="dependencies/iphone/GooglePlus.framework" if="ios"/>
-		<dependency path="dependencies/iphone/GoogleOpenSource.framework" if="ios"/>-->
+ 
 		<assets path="dependencies/iphone/GooglePlayGames.bundle" rename="GooglePlayGames.bundle" if="ios" />
 		<assets path="dependencies/iphone/GooglePlus.bundle" rename="GooglePlus.bundle" if="ios" />
+
+		
 
 	</section>
 </project>
