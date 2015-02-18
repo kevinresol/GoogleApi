@@ -1,5 +1,7 @@
 package googleapi.native;
 
+using tink.CoreApi;
+
 #if android
 import openfl.utils.JNI;
 #end
@@ -16,27 +18,38 @@ class Achievements
 {
 	public static inline var ACHIEVEMENTS_CLASS_QUALIFIER:String = "googleapi.games.Achievements";
 	
+	public static function show():Void
+	{
+		GoogleApi.token.handle(function(outcome) 
+			if (outcome.isSuccess()) googleapi_achievements_show());
+	}
+	
 	public static function increment(achievementId:String, numSteps:Int):Void
 	{
-		googleapi_achievements_increment(achievementId, numSteps);
+		GoogleApi.token.handle(function(outcome) 
+			if (outcome.isSuccess()) googleapi_achievements_increment(achievementId, numSteps));
 	}
 
 	public static function unlock(achievementId:String):Void
 	{
-		googleapi_achievements_unlock(achievementId);
+		GoogleApi.token.handle(function(outcome) 
+			if (outcome.isSuccess()) googleapi_achievements_unlock(achievementId));
 	}
 	
 	public static function reveal(achievementId:String):Void
 	{
-		googleapi_achievements_reveal(achievementId);
+		GoogleApi.token.handle(function(outcome) 
+			if (outcome.isSuccess()) googleapi_achievements_reveal(achievementId));
 	}
 
 	public static function setSteps(achievementId:String, numSteps:Int):Void
 	{
-		googleapi_achievements_setSteps(achievementId, numSteps);
+		GoogleApi.token.handle(function(outcome) 
+			if (outcome.isSuccess()) googleapi_achievements_setSteps(achievementId, numSteps));
 	}
 	
 	#if (android && openfl)
+	private static var googleapi_achievements_show = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "show", "()V");
 	private static var googleapi_achievements_increment = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "increment", "(Ljava/lang/String;I)V");
 	private static var googleapi_achievements_unlock = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "unlock", "(Ljava/lang/String;)V");
 	private static var googleapi_achievements_reveal = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "reveal", "(Ljava/lang/String;)V");

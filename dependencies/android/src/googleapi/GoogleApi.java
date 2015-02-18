@@ -80,6 +80,8 @@ public class GoogleApi extends Extension
 
 	private static final int USER_RECOVERABLE_AUTH = 5;
 
+	public static final int REQUEST_ACHIEVEMENTS = 6;
+
 	public static GoogleApiClient getApiClient()
 	{
 		return gameHelper.getApiClient();
