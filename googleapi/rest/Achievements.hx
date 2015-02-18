@@ -96,7 +96,7 @@ class Achievements
 }
 
 @:enum
-abstract ListState(String)
+abstract ListState(String) from String
 {
 	var ALL = "ALL";
 	var HIDDEN = "HIDDEN";
