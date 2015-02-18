@@ -65,8 +65,13 @@ lime rebuild googleapi ios
 ## Usage
 
 ```haxe
+using tink.CoreApi;
+
+// show the Google-provided Achievements UI
+googleapi.native.Acievements.show();
+
 // list leaderboards
-Leaderboards.list().handle(function(r)
+googleapi.rest.Leaderboards.list().handle(function(r)
 {
 	try 
 	{
@@ -80,7 +85,7 @@ Leaderboards.list().handle(function(r)
 });
 	
 // submit score and then list the scores
-Scores.submit("Some-Leaderboard-ID", 234).handle(function(s)
+googleapi.rest.Scores.submit("Some-Leaderboard-ID", 234).handle(function(s)
 {
 	try
 	{
@@ -88,7 +93,7 @@ Scores.submit("Some-Leaderboard-ID", 234).handle(function(s)
 		// do something with the submitResult
 		
 		// list the score (after successfully submitting)
-		Scores.list("Some-Leaderboard-ID", PUBLIC, ALL_TIME).handle(function(l)
+		googleapi.rest.Scores.list("Some-Leaderboard-ID", PUBLIC, ALL_TIME).handle(function(l)
 		{
 			try
 			{
