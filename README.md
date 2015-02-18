@@ -16,12 +16,12 @@ haxelib git googleapi https://github.com/kevinresol/GoogleApi.git
 
 #### Android
 
-Project xml:
+##### Project xml:
 ```xml
 <setenv name="GooglePlayID" value="yourAppId" if="android"/>
 ```
 
-Command line:
+##### Command line:
 ```
 lime rebuild googleapi android
 ```
@@ -30,7 +30,7 @@ lime rebuild googleapi android
 
 ##### Download the Google SDK (They are huge so I did not put them in the repo)
 
-Download Google+ iOS SDK and Games SDK from this [link](https://developers.google.com/games/services/downloads/)
+Download Google+ iOS SDK and Games SDK from this [link](https://developers.google.com/games/services/downloads/). 
 Unzip and put the following files under `/dependencies/iphone/`
  - GoogleOpenSource.framework
  - GooglePlayGames.framework
@@ -44,16 +44,18 @@ Download from this [link](https://developers.google.com/mobile-ads-sdk/docs/admo
 
 ##### Download libcurl.a
 
-Use this [script](https://github.com/brunodecarvalho/curl-ios-build-scripts) to compile the lastest cUrl library into a `.a` file. Also put it under `/dependencies/iphone/`
+Use this [script](https://github.com/brunodecarvalho/curl-ios-build-scripts) to compile the lastest cUrl library into `libcurl.a` file. Also put it under `/dependencies/iphone/`
+
+This is required because the Google SDK is shipped with an older version of curl which will crash upon loading URL with the HTTPS protocol. (HTTPS is necessary to access Google's REST API)
 
 
 
-Project xml:
+##### Project xml:
 ```xml
 <setenv name="GooglePlayID" value="yourAppId-someHash.apps.googleusercontent.com" if="ios"/>
 ```
 
-Command line:
+##### Command line:
 ```
 lime rebuild googleapi ios
 ```
