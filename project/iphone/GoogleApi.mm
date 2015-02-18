@@ -6,55 +6,50 @@
 
 namespace googleapi 
 {
-    void getToken(const char *clientId, AutoGCRoot * handler, const char * scope)
+	const char* clientId;
+
+	void authenticate(AutoGCRoot* handler, const char * scopes)
 	{
-		NSLog(@"GoogleApi.mm getToken");
-        GPPSignIn *signIn = [GPPSignIn sharedInstance];
-		signIn.shouldFetchGoogleUserID = YES;
-		signIn.clientID = [[NSString alloc] initWithUTF8String:clientId];
-		signIn.scopes = @[[[NSString alloc] initWithUTF8String:scope]];
-		signIn.delegate = [[SignInDelegate alloc] initWithSignIn:signIn andCompletionHandler:^(GTMOAuth2Authentication* auth, NSError* error) {
-			val_call1(handler->get(),  alloc_string(auth.accessToken.UTF8String));
-		}];	
-		NSLog(@"cpp before authenticate");
-		if(![signIn trySilentAuthentication])
-			[signIn authenticate];
-		NSLog(@"cpp after authenticate");
-    }
-	
-	void signInGames(const char *clientId, AutoGCRoot *handler)
-	{
-		NSLog(@"GoogleApi.mm signInGames");
-        GPPSignIn *signIn = [GPPSignIn sharedInstance];
-		signIn.shouldFetchGoogleUserID = YES;
-		signIn.clientID = [[NSString alloc] initWithUTF8String:clientId];
-		signIn.scopes = @[kGTLAuthScopePlusLogin, @"https://www.googleapis.com/auth/games"];
-		signIn.attemptSSO = NO;
-		signIn.delegate = [[SignInDelegate alloc] initWithSignIn:signIn andCompletionHandler:^(GTMOAuth2Authentication* auth, NSError* error) {
-			val_call1(handler->get(), alloc_string("done"));
+		GPGManager *manager = [GPGManager sharedInstance];
+		NSString* _clientId = [NSString stringWithUTF8String:clientId];
+		NSArray* scopesArray = [[NSString stringWithUTF8String:scopes] componentsSeparatedByString:@" "];
+
+		manager.statusDelegate = [[SignInDelegate alloc] initWithCompletionHandler:^(NSError* error) {
+			if(error)
+			{
+				NSLog(@"error, retry login");
+				[manager signInWithClientID:_clientId silently:NO withExtraScopes:scopesArray];
+			}
+			else
+			{
+				GTMOAuth2Authentication* auth = [GPPSignIn sharedInstance].authentication;
+
+				NSDictionary* dict = @{
+					@"status": @"success",
+					@"scopes": [NSString stringWithUTF8String:scopes],
+					@"accessToken": auth.accessToken
+				};
+		
+				NSError* jsonError;
+				NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict
+					options:(NSJSONWritingOptions)(0)
+					error:&jsonError];
+		
+				NSString* jsonResult = @"{}";
+		
+				if(!jsonData)
+					NSLog(@"JSON error: %@", jsonError.localizedDescription);
+				else
+					jsonResult = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+		
+
+				val_call1(handler->get(), alloc_string(jsonResult.UTF8String));
+			}
 		}];
 
-
-
-		if(signIn.delegate != nil)
-			NSLog(@"signIn.delegate != nil");
-
-		NSLog(signIn.clientID);
-
-		if(![signIn trySilentAuthentication])
+		if(![manager signInWithClientID:_clientId silently:YES withExtraScopes:scopesArray])
 		{
-			NSLog(@"GoogleApi.mm trySilentAuthentication failed");
-			[signIn authenticate];
+			[manager signInWithClientID:_clientId silently:NO withExtraScopes:scopesArray];
 		}
-		else
-		{
-			NSLog(@"GoogleApi.mm trySilentAuthentication success");
-		}
-	}
-
-	void authenticate()
-	{
-		if(![GPPSignIn sharedInstance].authentication)
-			[[GPPSignIn sharedInstance] authenticate];
 	}
 }

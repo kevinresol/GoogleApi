@@ -15,40 +15,19 @@
 
 using namespace googleapi;
 
-AutoGCRoot *mDebugHandler = 0;
-const char *mClientId;
-
-
-
-static value googleapi_init(value readyHandler, value debugHandler, value clientId)
+static value googleapi_init(value val_clientId)
 {
-	val_check_function(readyHandler, 1);
-	val_check_function(debugHandler, 1);
-	mDebugHandler = new AutoGCRoot(debugHandler);
-	mClientId = val_string(clientId);
-	val_call1(mDebugHandler->get(), alloc_string("ExternalInterface.cpp googleapi_init"));
-	signInGames(mClientId, new AutoGCRoot(readyHandler));	
+	clientId = val_get_string(val_clientId);
 	return val_null;
 }
-DEFINE_PRIM(googleapi_init, 3);
+DEFINE_PRIM(googleapi_init, 1);
 
-static value googleapi_get_token(value tokenHandler, value scope)
+static value googleapi_authenticate(value scopes, value handler)
 {
-	
-	val_call1(mDebugHandler->get(), alloc_string("cpp before func check"));
-	val_check_function(tokenHandler, 1);
-	val_call1(mDebugHandler->get(), alloc_string("cpp after func check"));
-	getToken(mClientId, new AutoGCRoot(tokenHandler), val_get_string(scope));
+	authenticate(new AutoGCRoot(handler), val_get_string(scopes));
 	return val_null;
 }
-DEFINE_PRIM(googleapi_get_token, 2);
-
-static value googleapi_authenticate()
-{
-	authenticate();
-	return val_null;
-}
-DEFINE_PRIM(googleapi_authenticate, 0);
+DEFINE_PRIM(googleapi_authenticate, 2);
 
 extern "C" void googleapi_main () {
 	
