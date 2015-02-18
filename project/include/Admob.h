@@ -1,7 +1,7 @@
 #ifndef Ad_IOS
 #define Ad_IOS
 
-namespace googleapi {
+namespace admob {
 
 	void initAd(const char *ID, int x, int y, int size, bool testMode);
 	void showAd();

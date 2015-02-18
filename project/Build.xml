@@ -7,7 +7,6 @@
 		<compilerflag value="-Iinclude"/>
 		
 		<file name="common/ExternalInterface.cpp"/>
-		<file name="common/GoogleApi.cpp"/>
 		
 	</files>
 	
@@ -17,7 +16,7 @@
 		<file name="iphone/GoogleApi.mm"/>
 		<file name="iphone/SignInDelegate.mm"/>
 		<file name="iphone/NMEAppDelegate.mm"/>
-		<file name="iphone/GAD.mm"/>
+		<file name="iphone/Admob.mm"/>
 		<file name="iphone/Achievements.mm"/>
 	</files>
 

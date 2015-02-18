@@ -40,7 +40,11 @@ class GoogleApi
 			
 		return token = Future.async(function(handler)
 		{
+			#if (android && openfl)
 			googleapi_authenticate(scopes.join(" "), {handle:onAuthenticateResult.bind(handler)});
+			#else
+			googleapi_authenticate(scopes.join(" "), onAuthenticateResult.bind(handler));
+			#end
 		});
 		
 	}
@@ -70,8 +74,8 @@ class GoogleApi
 	private static var googleapi_authenticate = JNI.createStaticMethod("googleapi.GoogleApi", "authenticate", "(Ljava/lang/String;Lorg/haxe/lime/HaxeObject;)V");
 	
 	#else
-	private static var googleapi_get_token = Lib.load("googleapi", "googleapi_get_token", 2);
-	private static var googleapi_invalidate_token = null;	
+	private static var googleapi_init = Lib.load("googleapi", "googleapi_init", 1);
+	private static var googleapi_authenticate = Lib.load("googleapi", "googleapi_authenticate", 2);
 	#end
 	
 }

@@ -1,9 +1,9 @@
-#include <AD.h>
+#include <Admob.h>
 #import <UIKit/UIKit.h>
 #import <GADBannerView.h>
 #import <GADInterstitial.h>
 
-namespace googleapi {
+namespace admob {
 
     static GADBannerView *bannerView_;
 	static UIViewController *rootView;

@@ -5,52 +5,37 @@
 #include <SignInDelegate.h>
 
 @implementation SignInDelegate
-- (SignInDelegate* )initWithSignIn:(GPPSignIn *) signInObject andCompletionHandler:(void(^)(GTMOAuth2Authentication*, NSError*)) handler {
-	signIn = signInObject;
+- (SignInDelegate* )initWithCompletionHandler:(void(^)(NSError*)) handler {
+	
 	completionHandler = [handler copy];
 	return [super init];
 }
 
-
-- (void)finishedWithAuth: (GTMOAuth2Authentication *)auth
-                   error: (NSError *) error {
-    NSLog(@"Received error %@ and auth object %@",error, auth);
-	if(error != nil)
-	{
-		NSLog(@"Re-auth");
-		[signIn authenticate];
-	}
-	else
-	{
-		_auth = auth;
-		[GPGManager sharedInstance].statusDelegate = self;
-		[[GPGManager sharedInstance] signIn];
-		//NSLog(auth.accessToken);
-		//val_call1(mTokenHandler->get(), alloc_string(auth.accessToken.UTF8String));
-	}
-}
-
+// called when sign in google play games
 - (void)didFinishGamesSignInWithError:(NSError *)error {
-    if (error) {
+    /*if (error) {
         NSLog(@"Received an error while signing in %@", [error localizedDescription]);
 
     } else {
         NSLog(@"GPG justSigned in!");
 		NSLog(@"going to callback");
-		completionHandler(_auth, error);
+
+		if(!completionHandler)
+			NSLog(@"null handler");
+
+		completionHandler(error);
 		[completionHandler release];
-    }
+    }*/
 }
+
+// called when sign in google+
 - (void)didFinishGoogleAuthWithError:(NSError *)error {
     if (error) {
         NSLog(@"Received an error while googleAuth %@", [error localizedDescription]);
-
     } else {
-        NSLog(@"G{G Signed in (Auth)!");
-		NSLog(@"going to callback");
-		completionHandler(_auth, error);
-		[completionHandler release];
+        NSLog(@"Google+ Signed in!");
     }
+    completionHandler(error);
 }
 
 - (void)didFinishGamesSignOutWithError:(NSError *)error {
