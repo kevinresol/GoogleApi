@@ -1,10 +1,10 @@
 package googleapi ;
 import googleapi.macro.Macro;
+import haxe.Json;
+import openfl.events.EventDispatcher;
 
 #if cpp
 import cpp.Lib;
-#elseif neko
-import neko.Lib;
 #end
 
 #if (android && openfl)
@@ -15,116 +15,88 @@ using tink.CoreApi;
 
 class GoogleApi 
 {
-	
+	public static inline var SCOPE_PLUS_LOGIN:String = "https://www.googleapis.com/auth/plus.login";
 	public static inline var SCOPE_GAMES:String = "https://www.googleapis.com/auth/games";
 	
-	public static var debugCallback:String->Void;
-	public static var ready:Surprise<Bool, Error> = init();
+	private static var inited:Bool = false;
 	
-	private static var tokenCache:Map<String, Surprise<String, Error>> = new Map();
+	public static var token:Null<Surprise<AccessToken, Error>>;
 	
-	
-	
-	public static function getToken(scope:String):Surprise<String, Error>
+	/**
+	 * Call this method at the beginning of 
+	 * By default it requests the access token of the following two scopes:
+		* https://www.googleapis.com/auth/plus.login
+		* https://www.googleapis.com/auth/games
+	 * @param	extraScopes array of scopes other than the default scopes (plus.login and games)
+	 */
+	public static function authenticate(?extraScopes:Array<String>):Surprise<AccessToken, Error>
 	{
-		if (!tokenCache.exists(scope))
+		if (!inited) init();
+		
+		var scopes = [SCOPE_PLUS_LOGIN, SCOPE_GAMES];
+		
+		if (extraScopes != null)
+			scopes = scopes.concat(extraScopes);
+			
+		return token = Future.async(function(handler)
 		{
-			tokenCache[scope] = ready.flatMap(function(ready)
-			{
-				try
-				{
-					ready.sure();
-					return Future.async(function(handler)		 
-					{
-						var tokenHandler = function(s:String) 
-						{
-							if (s.indexOf("failed") != -1)
-								handler(Failure(new Error(s)));
-							else
-								handler(Success(s));
-						};
-
-						#if (android && openfl)
-						googleapi_get_token({handler:tokenHandler}, scope);
-						#else
-						googleapi_get_token(tokenHandler, scope);
-						#end
-					});
-				}
-				catch (e:Error) // ready error (e.g. user does not authorize)
-					return Future.sync(Failure(e));
-			});
-		}
-		return tokenCache[scope];
-	}
-	
-	public static function invalidateToken(token:String):Void
-	{
-#if (android && openfl)
-		for (scope in tokenCache.keys())
-	
-	{
-			tokenCache[scope].handle(function(t) try if (t.sure() == token) invalidateTokenByScope(scope) catch (e:Error) {});
-		}
-#end
-	}
-	
-	public static function invalidateTokenByScope(scope:String):Void
-	{
-		if (tokenCache.exists(scope))
-		{
-			tokenCache[scope].handle(function(t)
-			{
-				try
-				{
-					var token = t.sure();
-					googleapi_invalidate_token(token);
-				}
-				catch (e:Error)
-				{
-					
-				}
-				
-				tokenCache.remove(scope);
-			});
-		}
-	}
-	
-	private static function init():Surprise<Bool, Error>
-	{
-		return Future.async(function(handler)
-		{
-			var accountNameHandler = function(s:String) // s is accountname if success
-				handler(s.indexOf("failed") != -1 ? Failure(new Error(s)) : Success(true));
-			var debugHandler = function(s:String) if (debugCallback != null) debugCallback(s);
-
-			#if (android && openfl)
-			var googleapi_init = JNI.createStaticMethod ("googleapi.GoogleApi", "init", "(Lorg/haxe/lime/HaxeObject;Lorg/haxe/lime/HaxeObject;)V");			
-			googleapi_init({handler:accountNameHandler}, {handler:debugHandler});
-			#else
-			var googleapi_init = Lib.load("googleapi", "googleapi_init", 3);
-			googleapi_init(accountNameHandler, debugHandler, Macro.getID());
-			#end
+			googleapi_authenticate(scopes.join(" "), {handle:onAuthenticateResult.bind(handler)});
 		});
 		
 	}
-
-	public static function authenticate():Void
+	private static function init():Void
 	{
+		inited = true;
+		
 		#if (android && openfl)
-
+		
 		#else
-		Lib.load("googleapi", "googleapi_authenticate", 0)();
+		googleapi_init(Macro.getID());
 		#end
+	}
+	
+	private static function onAuthenticateResult(handler, jsonResult)
+	{
+		var result:AuthenticateResult = Json.parse(jsonResult);
+		
+		if (result.status == "success")
+			handler(Success(new AccessToken(result.scopes.split(" "), result.accessToken)));
+		else
+			handler(Failure(new Error(Std.string(result.error))));
 	}
 	
 	
 	#if (android && openfl)
-	private static var googleapi_get_token = JNI.createStaticMethod ("googleapi.GoogleApi", "getToken", "(Lorg/haxe/lime/HaxeObject;Ljava/lang/String;)V");
-	private static var googleapi_invalidate_token = JNI.createStaticMethod ("googleapi.GoogleApi", "invalidateToken", "(Ljava/lang/String;)V");
+	private static var googleapi_authenticate = JNI.createStaticMethod("googleapi.GoogleApi", "authenticate", "(Ljava/lang/String;Lorg/haxe/lime/HaxeObject;)V");
+	
 	#else
 	private static var googleapi_get_token = Lib.load("googleapi", "googleapi_get_token", 2);
 	private static var googleapi_invalidate_token = null;	
 	#end
 	
+}
+
+class AccessToken
+{
+	public var scopes:Array<String>;
+	public var token:String;
+	
+	public function new(scopes:Array<String>, token:String)
+	{
+		this.scopes = scopes;
+		this.token = token;
+	}
+	
+	public function toString():String
+	{
+		return 'scopes: $scopes, token: $token';
+	}
+}
+
+typedef AuthenticateResult = 
+{
+	status:String,
+	?error:String,
+	?scopes:String,
+	?accessToken:String
 }
