@@ -1,109 +1,100 @@
 #include <Achievements.h>
-#include <Utils.h>
 #import <GooglePlayGames/GooglePlayGames.h>
 #import <GooglePlus/GooglePlus.h>
 #import <GoogleOpenSource/GoogleOpenSource.h>
 #include <hx/CFFI.h>
 
 namespace googleapi {
+	namespace achievements {
+		void increment(const char * achievementId, int numSteps) 
+		{
+			if([GPGManager sharedInstance].isSignedIn)
+			{
+			
+				[[GPGAchievement achievementWithId:[NSString stringWithUTF8String:achievementId]] incrementAchievementNumSteps:numSteps completionHandler:^(BOOL newlyUnlocked, int currentSteps, NSError *error) 
+				{
+					if(error) 
+					{
+						NSLog(@"%@", [error localizedDescription]);
+					}
+					else if (newlyUnlocked) 
+					{
+						NSLog(@"incremental unlocked");
+					}
+					else
+					{
+						NSLog(@"total steps: %i", currentSteps);
+					}
+				}];
+			}
 	
-	void increment(const char * id, int numSteps) 
-	{
-		NSString *achievementId = [[NSString alloc] initWithUTF8String:id];
-		
-		if([GPGManager sharedInstance].isSignedIn)
-		{
-		
-			[[GPGAchievement achievementWithId:achievementId] incrementAchievementNumSteps:numSteps completionHandler:^(BOOL newlyUnlocked, int currentSteps, NSError *error) 
-			{
-				if(error) 
-				{
-					NSLog(@"%@", [error localizedDescription]);
-				}
-				else if (newlyUnlocked) 
-				{
-					NSLog(@"incremental unlocked");
-				}
-				else
-				{
-					NSLog(@"total steps: %i", currentSteps);
-				}
-			}];
 		}
-
-	}
-
-	void unlock(const char * id) 
-	{	
-		NSString *achievementId = [[NSString alloc] initWithUTF8String:id];
+	
+		void unlock(const char * achievementId) 
+		{	
+			if([GPGManager sharedInstance].isSignedIn)
+			{
 			
-		if([GPGManager sharedInstance].isSignedIn)
-		{
-		
-			[[GPGAchievement achievementWithId:achievementId] unlockAchievementWithCompletionHandler:^(BOOL newlyUnlocked, NSError *error) 
-			{
-				if(error) 
+				[[GPGAchievement achievementWithId:[NSString stringWithUTF8String:achievementId]] unlockAchievementWithCompletionHandler:^(BOOL newlyUnlocked, NSError *error) 
 				{
-					NSLog(@"%@", [error localizedDescription]);
-				}
-				else if (newlyUnlocked) 
-				{
-					NSLog(@"already unlocked");
-				}
-				else
-				{
-					NSLog(@"successfully unlocked");
-				}
-			}];
+					if(error) 
+					{
+						NSLog(@"%@", [error localizedDescription]);
+					}
+					else if (newlyUnlocked) 
+					{
+						NSLog(@"already unlocked");
+					}
+					else
+					{
+						NSLog(@"successfully unlocked");
+					}
+				}];
+			}
 		}
-	}
-
-	void setSteps(const char * id, int numSteps) 
-	{
-		NSString *achievementId = [[NSString alloc] initWithUTF8String:id];
-		
-		if([GPGManager sharedInstance].isSignedIn)
+	
+		void setSteps(const char * achievementId, int numSteps) 
 		{
-		
-			[[GPGAchievement achievementWithId:achievementId] setSteps:numSteps completionHandler:^(BOOL newlyUnlocked, int currentSteps, NSError *error) 
+			if([GPGManager sharedInstance].isSignedIn)
 			{
-				if(error) 
-				{
-					NSLog(@"%@", [error localizedDescription]);
-				}
-				else if (newlyUnlocked) 
-				{
-					NSLog(@"set step unlocked");
-				}
-				else
-				{
-					NSLog(@"total steps: %i", currentSteps);
-				}
-			}];
-		}	
-	}
-
-	void reveal(const char * id) 
-	{
-		NSString *achievementId = [[NSString alloc] initWithUTF8String:id];
 			
-		if([GPGManager sharedInstance].isSignedIn)
-		{
-		
-			[[GPGAchievement achievementWithId:achievementId] revealAchievementWithCompletionHandler:^(GPGAchievementState state, NSError *error) 
-			{
-				if(error) 
+				[[GPGAchievement achievementWithId:[NSString stringWithUTF8String:achievementId]] setSteps:numSteps completionHandler:^(BOOL newlyUnlocked, int currentSteps, NSError *error) 
 				{
-					NSLog(@"%@", [error localizedDescription]);
-				}
-				else
-				{
-					NSLog(@"successfully revealed");
-				}
-			}];
+					if(error) 
+					{
+						NSLog(@"%@", [error localizedDescription]);
+					}
+					else if (newlyUnlocked) 
+					{
+						NSLog(@"set step unlocked");
+					}
+					else
+					{
+						NSLog(@"total steps: %i", currentSteps);
+					}
+				}];
+			}	
 		}
-
+	
+		void reveal(const char * achievementId) 
+		{	
+			if([GPGManager sharedInstance].isSignedIn)
+			{
+			
+				[[GPGAchievement achievementWithId:[NSString stringWithUTF8String:achievementId]] revealAchievementWithCompletionHandler:^(GPGAchievementState state, NSError *error) 
+				{
+					if(error) 
+					{
+						NSLog(@"%@", [error localizedDescription]);
+					}
+					else
+					{
+						NSLog(@"successfully revealed");
+					}
+				}];
+			}
+	
+		}
 	}
-
 }
 
