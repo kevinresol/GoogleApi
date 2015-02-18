@@ -20,7 +20,7 @@ namespace googleapi {
 				{
 					NSLog(@"%@", [error localizedDescription]);
 				}
-				else if (!newlyUnlocked) 
+				else if (newlyUnlocked) 
 				{
 					NSLog(@"incremental unlocked");
 				}

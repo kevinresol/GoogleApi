@@ -8,7 +8,7 @@ namespace googleapi {
 	
     void getToken(const char *clientId, AutoGCRoot *tokenHandler, const char *scope);
 	void signInGames(const char *clientId, AutoGCRoot *handler);
-	
+	void authenticate();
 }
 
 

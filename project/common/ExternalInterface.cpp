@@ -24,9 +24,9 @@ static value googleapi_init(value readyHandler, value debugHandler, value client
 {
 	val_check_function(readyHandler, 1);
 	val_check_function(debugHandler, 1);
-
 	mDebugHandler = new AutoGCRoot(debugHandler);
 	mClientId = val_string(clientId);
+	val_call1(mDebugHandler->get(), alloc_string("ExternalInterface.cpp googleapi_init"));
 	signInGames(mClientId, new AutoGCRoot(readyHandler));	
 	return val_null;
 }
@@ -34,11 +34,21 @@ DEFINE_PRIM(googleapi_init, 3);
 
 static value googleapi_get_token(value tokenHandler, value scope)
 {
+	
+	val_call1(mDebugHandler->get(), alloc_string("cpp before func check"));
 	val_check_function(tokenHandler, 1);
+	val_call1(mDebugHandler->get(), alloc_string("cpp after func check"));
 	getToken(mClientId, new AutoGCRoot(tokenHandler), val_get_string(scope));
 	return val_null;
 }
 DEFINE_PRIM(googleapi_get_token, 2);
+
+static value googleapi_authenticate()
+{
+	authenticate();
+	return val_null;
+}
+DEFINE_PRIM(googleapi_authenticate, 0);
 
 extern "C" void googleapi_main () {
 	

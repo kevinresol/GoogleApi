@@ -47,8 +47,6 @@ class GoogleApi
 						#if (android && openfl)
 						googleapi_get_token({handler:tokenHandler}, scope);
 						#else
-						trace("call cpp get_token");
-						debugCallback("call cpp get_token");
 						googleapi_get_token(tokenHandler, scope);
 						#end
 					});
@@ -105,12 +103,19 @@ class GoogleApi
 			googleapi_init({handler:accountNameHandler}, {handler:debugHandler});
 			#else
 			var googleapi_init = Lib.load("googleapi", "googleapi_init", 3);
-			trace(Macro.getID());
 			googleapi_init(accountNameHandler, debugHandler, Macro.getID());
-			trace(2);
 			#end
 		});
 		
+	}
+
+	public static function authenticate():Void
+	{
+		#if (android && openfl)
+
+		#else
+		Lib.load("googleapi", "googleapi_authenticate", 0)();
+		#end
 	}
 	
 	

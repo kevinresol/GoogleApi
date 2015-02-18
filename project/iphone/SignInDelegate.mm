@@ -6,6 +6,7 @@
 
 @implementation SignInDelegate
 - (SignInDelegate* )initWithSignIn:(GPPSignIn *) signInObject andCompletionHandler:(void(^)(GTMOAuth2Authentication*, NSError*)) handler {
+	NSLog(@"SigninDelegate.mm initWithSignIn");
 	signIn = signInObject;
 	completionHandler = [handler copy];
 	return [super init];

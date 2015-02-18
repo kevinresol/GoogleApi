@@ -12,7 +12,7 @@
 		<android extension="googleapi.GoogleApi" />
 
 		<template path="templates/iphone" if="ios"/>
-		<ios linker-flags="-ObjC -force_load $SRCROOT/$PRODUCT_NAME/lib/$ARCHS/libgoogleapi.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GooglePlayGames.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GooglePlus.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GoogleOpenSource.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/libGoogleAdMobAds.a"/>
+		<ios linker-flags="-ObjC -force_load $SRCROOT/$PRODUCT_NAME/lib/$ARCHS/libgoogleapi.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GooglePlayGames.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GooglePlus.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/GoogleOpenSource.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/libGoogleAdMobAds.a -force_load /Users/kevin/Codes/GoogleApi/ndll/iPhone/libcurl.a"/>
 		<dependency name="AddressBook.framework" if="ios" />
 		<dependency name="AdSupport.framework" if="ios" />
 		<dependency name="AssetsLibrary.framework" if="ios" />
