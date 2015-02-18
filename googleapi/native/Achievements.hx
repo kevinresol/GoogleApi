@@ -18,36 +18,36 @@ class Achievements
 	
 	public static function increment(achievementId:String, numSteps:Int):Void
 	{
-		_increment(achievementId, numSteps);
+		googleapi_achievements_increment(achievementId, numSteps);
 	}
 
 	public static function unlock(achievementId:String):Void
 	{
-		_unlock(achievementId);
+		googleapi_achievements_unlock(achievementId);
 	}
 	
 	public static function reveal(achievementId:String):Void
 	{
-		_reveal(achievementId);
+		googleapi_achievements_reveal(achievementId);
 	}
 
 	public static function setSteps(achievementId:String, numSteps:Int):Void
 	{
-		_setSteps(achievementId, numSteps);
+		googleapi_achievements_setSteps(achievementId, numSteps);
 	}
 	
-	#if android
-	private static var _increment = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "increment", "(Ljava/lang/String;I)V");
-	private static var _unlock = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "unlock", "(Ljava/lang/String;)V");
-	private static var _reveal = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "reveal", "(Ljava/lang/String;)V");
-	private static var _setSteps = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "setSteps", "(Ljava/lang/String;I)V");
+	#if (android && openfl)
+	private static var googleapi_achievements_increment = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "increment", "(Ljava/lang/String;I)V");
+	private static var googleapi_achievements_unlock = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "unlock", "(Ljava/lang/String;)V");
+	private static var googleapi_achievements_reveal = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "reveal", "(Ljava/lang/String;)V");
+	private static var googleapi_achievements_setSteps = JNI.createStaticMethod(ACHIEVEMENTS_CLASS_QUALIFIER, "setSteps", "(Ljava/lang/String;I)V");
 	#end
 	
 	#if ios
-	private static var _increment = Lib.load("googleapi","achievements_increment",2);
-	private static var _unlock = Lib.load("googleapi","achievements_unlock",1);
-	private static var _reveal = Lib.load("googleapi","achievements_reveal",1);
-	private static var _setSteps = Lib.load("googleapi","achievements_setSteps",2);
+	private static var googleapi_achievements_increment = Lib.load("googleapi","achievements_increment",2);
+	private static var googleapi_achievements_unlock = Lib.load("googleapi","achievements_unlock",1);
+	private static var googleapi_achievements_reveal = Lib.load("googleapi","achievements_reveal",1);
+	private static var googleapi_achievements_setSteps = Lib.load("googleapi","achievements_setSteps",2);
 	#end
 	
 }
