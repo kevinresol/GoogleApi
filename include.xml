@@ -27,9 +27,9 @@
 		<dependency name="SystemConfiguration.framework" if="ios" />
 		<!--<dependency path="dependencies/iphone/GooglePlayGames.framework" if="ios"/>
 		<dependency path="dependencies/iphone/GooglePlus.framework" if="ios"/>
-		<dependency path="dependencies/iphone/GoogleOpenSource.framework" if="ios"/>
-		<assets path="dependencies/iphone/GooglePlayGames.bundle" if="ios" />
-		<assets path="dependencies/iphone/GooglePlus.bundle" if="ios" />-->
+		<dependency path="dependencies/iphone/GoogleOpenSource.framework" if="ios"/>-->
+		<assets path="dependencies/iphone/GooglePlayGames.bundle" rename="GooglePlayGames.bundle" if="ios" />
+		<assets path="dependencies/iphone/GooglePlus.bundle" rename="GooglePlus.bundle" if="ios" />
 
 	</section>
 </project>
