@@ -13,7 +13,7 @@
 
 		<template path="templates/iphone" if="ios"/>
 		<template path="dependencies/iphone/libcurl.a" rename="lib/libcurl.a" if="ios" />
-		<template path="dependencies/iphone/libGoogleAdMobAds.a" rename="lib/libGoogleAdMobAds.a" if="ios" />
+		<template path="dependencies/iphone/GoogleMobileAds.framework/Versions/A/GoogleMobileAds" rename="lib/libGoogleAdMobAds.a" if="ios" />
 		<template path="dependencies/iphone/GooglePlayGames.framework/Versions/A/GooglePlayGames" rename="lib/GooglePlayGames.a" if="ios" />
 		<template path="dependencies/iphone/GooglePlus.framework/Versions/A/GooglePlus" rename="lib/GooglePlus.a" if="ios" />
 		<template path="dependencies/iphone/GoogleOpenSource.framework/Versions/A/GoogleOpenSource" rename="lib/GoogleOpenSource.a" if="ios" />
@@ -22,11 +22,16 @@
 		<dependency name="AddressBook.framework" if="ios" />
 		<dependency name="AdSupport.framework" if="ios" />
 		<dependency name="AssetsLibrary.framework" if="ios" />
+		<dependency name="AudioToolbox.framework" if="ios" />
+		<dependency name="AVFoundation.framework" if="ios" />
 		<dependency name="CoreData.framework" if="ios" />
+		<dependency name="CoreGraphics.framework" if="ios" />
 		<dependency name="CoreLocation.framework" if="ios" />
 		<dependency name="CoreMotion.framework" if="ios" />
 		<dependency name="CoreTelephony.framework" if="ios" />
 		<dependency name="CoreText.framework" if="ios" />
+		<dependency name="EventKit.framework" if="ios" />
+		<dependency name="EventKitUI.framework" if="ios" />
 		<dependency name="MediaPlayer.framework" if="ios" />
 		<dependency name="MessageUI.framework" if="ios" />
 		<dependency name="QuartzCore.framework" if="ios" />
