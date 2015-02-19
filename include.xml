@@ -32,6 +32,7 @@
 		<dependency name="CoreText.framework" if="ios" />
 		<dependency name="EventKit.framework" if="ios" />
 		<dependency name="EventKitUI.framework" if="ios" />
+		<dependency name="Foundation.framework" if="ios" />
 		<dependency name="MediaPlayer.framework" if="ios" />
 		<dependency name="MessageUI.framework" if="ios" />
 		<dependency name="QuartzCore.framework" if="ios" />
