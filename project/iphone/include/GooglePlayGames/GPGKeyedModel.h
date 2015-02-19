@@ -10,14 +10,17 @@ typedef void (^GPGModelDidLoadBlock)(NSError *error);
 
 #pragma mark Querying Data 
 
-- (void)loadDataForKey:(NSString *)key;
-- (void)loadDataForKey:(NSString *)key completionHandler:(GPGModelDidLoadBlock)completionHandler;
+- (void)loadDataForKey:(NSString *)key __attribute__ ((deprecated));
+- (void)loadDataForKey:(NSString *)key completionHandler:(GPGModelDidLoadBlock)completionHandler
+    __attribute__ ((deprecated));
 
-- (void)reloadDataForKey:(NSString *)key;
-- (void)reloadDataForKey:(NSString *)key completionHandler:(GPGModelDidLoadBlock)completionHandler;
+- (void)reloadDataForKey:(NSString *)key __attribute__ ((deprecated));
 
-- (BOOL)isLoadingDataForKey:(NSString *)key;
-- (BOOL)isDataLoadedForKey:(NSString *)key;
-- (NSError *)errorFromLoadingDataForKey:(NSString *)key;
+- (void)reloadDataForKey:(NSString *)key completionHandler:(GPGModelDidLoadBlock)completionHandler
+    __attribute__ ((deprecated));
+
+- (BOOL)isLoadingDataForKey:(NSString *)key __attribute__ ((deprecated));
+- (BOOL)isDataLoadedForKey:(NSString *)key __attribute__ ((deprecated));
+- (NSError *)errorFromLoadingDataForKey:(NSString *)key __attribute__ ((deprecated));
 
 @end

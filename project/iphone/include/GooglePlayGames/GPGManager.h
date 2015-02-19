@@ -19,7 +19,6 @@ typedef void (^GPGRevisionCheckBlock)(GPGRevisionStatus revisionStatus, NSError 
 @class GPGRealTimeRoom;
 @class GPGRealTimeRoomData;
 @class GPGRealTimeParticipant;
-@class GPGRealTimeRoomViewController;
 
 @protocol GPGRealTimeRoomDelegate;
 @protocol GPGQuestDelegate;
@@ -68,7 +67,8 @@ typedef void (^GPGRevisionCheckBlock)(GPGRevisionStatus revisionStatus, NSError 
 
 #pragma mark Application State 
 
-- (GPGApplicationModel *)applicationModel;
+@property(nonatomic, readonly, strong) GPGApplicationModel *applicationModel
+    __attribute__((deprecated));
 
 - (NSString *)applicationId __attribute__((deprecated));
 
@@ -89,10 +89,18 @@ typedef void (^GPGRevisionCheckBlock)(GPGRevisionStatus revisionStatus, NSError 
 #pragma mark Push Notifications 
 - (BOOL)tryHandleRemoteNotification:(NSDictionary *)userInfo;
 
+- (BOOL)tryHandleRemoteNotification:(NSDictionary *)userInfo
+            forActionWithIdentifier:(NSString *)identifier
+                  completionHandler:(void (^)())completionHandler;
+
 - (void)registerDeviceToken:(NSData *)deviceTokenData
              forEnvironment:(GPGPushNotificationEnvironment)environment;
 
 - (void)unregisterCurrentDeviceToken;
+
+#if defined(__IPHONE_8_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0)
++ (void)registerForInteractiveGamesNotificationsWithType:(UIUserNotificationType)type;
+#endif
 
 #pragma mark - Properties 
 @property(nonatomic, weak) id<GPGTurnBasedMatchDelegate> turnBasedMatchDelegate;
@@ -122,11 +130,15 @@ typedef void (^GPGRevisionCheckBlock)(GPGRevisionStatus revisionStatus, NSError 
 
 @property(nonatomic, assign) GPGToastPlacement achievementUnlockedToastPlacement;
 
+@property(nonatomic, assign) NSUInteger questCompletedOffset;
+
+@property(nonatomic, assign) GPGToastPlacement questCompletedToastPlacement;
+
 #pragma mark - SDK Revision Check 
 - (void)refreshRevisionStatus:(GPGRevisionCheckBlock)revisionCheckHandler;
 
-- (GPGRevisionStatus)revisionStatus;
+@property(nonatomic, readonly) GPGRevisionStatus revisionStatus;
 
-- (BOOL)isRevisionValid;
+@property(nonatomic, getter=isRevisionValid, readonly) BOOL revisionValid;
 
 @end

@@ -6,6 +6,11 @@
 
 namespace googleapi {
 	namespace achievements {
+		void show()
+		{
+			[[GPGLauncherController sharedInstance] presentAchievementList];
+		}
+
 		void increment(const char * achievementId, int numSteps) 
 		{
 			if([GPGManager sharedInstance].isSignedIn)

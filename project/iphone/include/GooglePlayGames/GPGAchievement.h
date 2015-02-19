@@ -22,9 +22,9 @@ typedef void (^GPGAllAchievementsDidResetBlock)(NSError *error);
 
 @interface GPGAchievement : NSObject
 
-- (id)initWithAchievementId:(NSString *)achievementId;
+- (instancetype)initWithAchievementId:(NSString *)achievementId;
 
-+ (id)achievementWithId:(NSString *)achievementId;
++ (instancetype)achievementWithId:(NSString *)achievementId;
 
 #pragma mark Constant Properties 
 

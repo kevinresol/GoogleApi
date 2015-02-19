@@ -13,8 +13,8 @@ typedef void (^GPGSnapshotListBlock)(NSArray *snapshotMetadata, NSError *error);
 
 typedef void (^GPGSnapshotOpenBlock)(GPGSnapshotMetadata *snapshot,
                                      NSString *conflictId,
-                                     GPGSnapshotMetadata *conflictingSnapshotBase,
-                                     GPGSnapshotMetadata *conflictingSnapshotRemote,
+                                     GPGSnapshotMetadata *conflictingSnapshot,
+                                     GPGSnapshotMetadata *conflictingSnapshotUnmerged,
                                      NSError *error);
 
 typedef void (^GPGSnapshotReadBlock)(NSData *data, NSError *error);

@@ -57,6 +57,7 @@ class Achievements
 	#end
 	
 	#if ios
+	private static var googleapi_achievements_show = Lib.load("googleapi", "achievements_show", 0);
 	private static var googleapi_achievements_increment = Lib.load("googleapi","achievements_increment",2);
 	private static var googleapi_achievements_unlock = Lib.load("googleapi","achievements_unlock",1);
 	private static var googleapi_achievements_reveal = Lib.load("googleapi","achievements_reveal",1);

@@ -6,6 +6,12 @@
 
 #import "GPGEnums.h"
 
+@class GPGAchievementMetadata;
+
+typedef void (^GPGAchievementMetadataBlock)(GPGAchievementMetadata *metadata, NSError *error);
+
+typedef void (^GPGAchievementAllMetadataBlock)(NSArray *metadata, NSError *error);
+
 
 @interface GPGAchievementMetadata : NSObject <NSCopying, NSCoding>
 
@@ -36,5 +42,17 @@
 @property(nonatomic, readonly, assign) CGFloat progress;
 
 @property(nonatomic, readonly, assign) int32_t experiencePoints;
+
++ (void)metadataForAchievementId:(NSString *)achievementId
+               completionHandler:(GPGAchievementMetadataBlock)completionHandler;
+
++ (void)metadataForAchievementId:(NSString *)achievementId
+                      dataSource:(GPGDataSource)dataSource
+               completionHandler:(GPGAchievementMetadataBlock)completionHandler;
+
++ (void)allMetadataWithCompletionHandler:(GPGAchievementAllMetadataBlock)completionHandler;
+
++ (void)allMetadataFromDataSource:(GPGDataSource)dataSource
+                completionHandler:(GPGAchievementAllMetadataBlock)completionHandler;
 
 @end

@@ -77,6 +77,12 @@ value admob_ad_show_interstitial() {
 DEFINE_PRIM(admob_ad_show_interstitial, 0);
 
 // Games Achievements
+value achievements_show() {
+	googleapi::achievements::show();
+	return alloc_null();
+}
+DEFINE_PRIM(achievements_show, 0);
+
 value achievements_unlock(value id) { 
 	googleapi::achievements::unlock(val_string(id));
 	return alloc_null();

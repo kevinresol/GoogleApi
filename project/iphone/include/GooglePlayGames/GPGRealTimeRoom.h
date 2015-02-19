@@ -10,7 +10,6 @@
 @class GPGRealTimeRoom;
 @class GPGRealTimeRoomData;
 @class GPGRealTimeParticipant;
-@class GPGRealTimeRoomViewController;
 
 typedef void(^GPGRealTimeParticipantIterator)(GPGRealTimeParticipant *participant);
 
@@ -18,6 +17,10 @@ typedef void(^GPGRealTimeParticipantIterator)(GPGRealTimeParticipant *participan
 
 @protocol GPGRealTimeRoomDelegate <NSObject>
 @optional
+
+- (void)didAcceptRealTimeInviteForRoom:(GPGRealTimeRoomData *)roomData;
+
+- (void)didDeclineRealTimeInviteForRoom:(GPGRealTimeRoomData *)roomData;
 
 - (void)didReceiveRealTimeInviteForRoom:(GPGRealTimeRoomData *)roomData;
 
@@ -39,8 +42,6 @@ typedef void(^GPGRealTimeParticipantIterator)(GPGRealTimeParticipant *participan
               results:(NSArray *)results;
 
 - (void)room:(GPGRealTimeRoom *)room didFailWithError:(NSError *)error;
-
-- (void)roomViewControllerDidClose:(GPGRealTimeRoomViewController *)roomViewController;
 
 @end
 
@@ -76,7 +77,7 @@ typedef void(^GPGRealTimeParticipantIterator)(GPGRealTimeParticipant *participan
 
 @interface GPGRealTimeParticipant : NSObject
 
-- (BOOL)canCommunicate;
+@property (nonatomic, readonly) BOOL canCommunicate;
 
 - (int)sendReliableData:(NSData *)data;
 

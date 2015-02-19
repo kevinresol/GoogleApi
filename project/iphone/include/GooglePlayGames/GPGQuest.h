@@ -47,6 +47,9 @@ typedef void (^GPGQuestCompletionBlock)(NSError *error);
 
 + (void)allQuestsWithCompletionHandler:(GPGQuestListBlock)completionHandler;
 
++ (void)allQuestsFromDataSource:(GPGDataSource)dataSource
+              completionHandler:(GPGQuestListBlock)completionHandler;
+
 + (void)questsForState:(GPGQuestState)state completionHandler:(GPGQuestListBlock)completionHandler;
 
 - (void)acceptWithCompletionHandler:(GPGQuestCompletionBlock)completionHandler;
@@ -58,6 +61,8 @@ typedef void (^GPGQuestCompletionBlock)(NSError *error);
 @property(nonatomic, readonly, copy) NSString *questMilestoneId;
 
 @property(nonatomic, readonly, copy) NSString *questId;
+
+@property(nonatomic, readonly, copy) NSString *eventId;
 
 @property(nonatomic, readonly, assign) GPGQuestMilestoneState state;
 

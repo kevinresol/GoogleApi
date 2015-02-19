@@ -6,6 +6,7 @@
 
 #import "GPGEnums.h"
 
+__attribute__ ((deprecated))
 @interface GPGAppStateListInfo : NSObject
 
 @property(nonatomic, assign) BOOL dataIsStale;
@@ -26,6 +27,7 @@ typedef NSData * (^GPGAppStateConflictHandler)(NSNumber *key,
                                                NSData *localState,
                                                NSData *remoteState);
 
+__attribute__ ((deprecated))
 @interface GPGAppStateModel : NSObject
 
 - (void)setStateData:(NSData *)state forKey:(NSNumber *)key;

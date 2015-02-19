@@ -13,8 +13,8 @@ typedef void (^GPGScoreBatchReportBlock)(NSError *error);
 
 @interface GPGScore : NSObject <NSCoding>
 
-- (id)initWithLeaderboardId:(NSString *)leaderboardId;
-+ (id)scoreWithLeaderboardId:(NSString *)leaderboardId;
+- (instancetype)initWithLeaderboardId:(NSString *)leaderboardId;
++ (instancetype)scoreWithLeaderboardId:(NSString *)leaderboardId;
 
 #pragma mark Constant Properties 
 @property(nonatomic, readonly, copy) NSString *leaderboardId;
@@ -28,7 +28,11 @@ typedef void (^GPGScoreBatchReportBlock)(NSError *error);
 - (BOOL)submitScoreWithCompletionHandler:(GPGScoreReportScoreBlock)completionHandler;
 
 + (void)batchSubmitScores:(NSArray *)scores
-    withCompletionHandler:(GPGScoreReportScoreBlock)completionHandler;
+    withCompletionHandler:(GPGScoreReportScoreBlock)completionHandler __attribute__((deprecated));
+
++ (void)batchSubmitScores:(NSArray *)scores
+        completionHandler:(GPGScoreReportScoreBlock)completionHandler;
+
 
 #pragma mark Post-Load Results 
 @property(nonatomic, readonly, copy) NSURL *avatarUrl __attribute__((deprecated));

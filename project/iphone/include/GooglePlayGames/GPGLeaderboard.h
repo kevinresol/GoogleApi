@@ -15,9 +15,9 @@ typedef void (^GPGScoreResetBlock)(NSError *error);
 @interface GPGLeaderboard : NSObject
 
 
-- (id)initWithLeaderboardId:(NSString *)leaderboardId;
+- (instancetype)initWithLeaderboardId:(NSString *)leaderboardId;
 
-+ (id)leaderboardWithId:(NSString *)leaderboardId;
++ (instancetype)leaderboardWithId:(NSString *)leaderboardId;
 
 #pragma mark Constant Properties 
 @property(nonatomic, readonly, copy) NSString *leaderboardId;
@@ -32,6 +32,9 @@ typedef void (^GPGScoreResetBlock)(NSError *error);
 #pragma mark Actions 
 - (void)loadScoresWithCompletionHandler:(GPGLeaderboardLoadScoresBlock)completionHandler;
 
+- (void)loadScoresFromDataSource:(GPGDataSource)dataSource
+               completionHandler:(GPGLeaderboardLoadScoresBlock)completionHandler;
+
 - (void)loadNextPageOfScoresWithCompletionHandler:(GPGLeaderboardLoadScoresBlock)completionHandler;
 
 - (void)loadPreviousPageOfScoresWithCompletionHandler:(GPGLeaderboardLoadScoresBlock)completionHandler;
@@ -40,11 +43,11 @@ typedef void (^GPGScoreResetBlock)(NSError *error);
 
 #pragma mark In-Flight Status 
 
-- (BOOL)isLoading;
+@property(nonatomic, getter=isLoading, readonly) BOOL loading;
 
-- (BOOL)isLoadingPreviousPage;
+@property(nonatomic, readonly, assign) BOOL loadingPreviousPage;
 
-- (BOOL)isLoadingNextPage;
+@property(nonatomic, readonly, assign) BOOL loadingNextPage;
 
 #pragma mark Post-Load Results 
 

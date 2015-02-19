@@ -3,6 +3,7 @@
 // Copyright 2013 Google Inc. All rights reserved.
 //
 #import <Foundation/Foundation.h>
+
 #import "GPGEnums.h"
 
 @class GPGMultiplayerConfig;
@@ -15,7 +16,7 @@ typedef void (^GPGTurnBasedMatchCreateBlock)(GPGTurnBasedMatch *match, NSError *
 
 typedef void (^GPGTurnBasedMatchGetBlock)(GPGTurnBasedMatch *match, NSError *error);
 
-typedef void (^GPGTurnBasedAllMatchesBlock)(NSArray *matches, NSError *error);
+typedef void (^GPGTurnBasedMatchesBlock)(NSArray *matches, NSError *error);
 
 typedef void (^GPGTurnBasedMatchListBlock)(NSArray *matches, NSString *pageToken, NSError *error);
 
@@ -63,32 +64,31 @@ typedef void (^GPGTurnBasedMatchCompletionBlock)(NSError *error);
 
 @property(nonatomic, readonly, assign) GPGTurnBasedMatchStatus status;
 
-
 @property(nonatomic, readonly, assign) GPGTurnBasedUserMatchStatus userMatchStatus;
 
 #pragma mark - Convenience Functions
 
 - (BOOL)canParticipantTakeTurn:(NSString *)participantId;
 
-- (NSString *)localParticipantId;
+@property(nonatomic, readonly, copy) NSString *localParticipantId;
 
 - (NSString *)participantIdForPlayerId:(NSString *)playerId;
 
-- (GPGTurnBasedParticipant *)localParticipant;
+@property(nonatomic, readonly, strong) GPGTurnBasedParticipant *localParticipant;
 
 - (GPGTurnBasedParticipant *)participantForId:(NSString *)participantId;
 
-- (GPGPlayer *)pendingPlayer;
+@property(nonatomic, readonly, strong) GPGPlayer *pendingPlayer;
 
-- (BOOL)isMyTurn;
+@property(nonatomic, getter=isMyTurn, readonly) BOOL myTurn;
 
-- (GPGTurnBasedParticipantResult *)myResult;
+@property(nonatomic, readonly, strong) GPGTurnBasedParticipantResult *myResult;
 
 - (GPGTurnBasedParticipantResult *)resultForParticipantId:(NSString *)participantId;
 
 - (GPGTurnBasedParticipantStatus)statusForPlayerId:(NSString *)playerId;
 
-- (GPGTurnBasedParticipantStatus)myStatus;
+@property(nonatomic, readonly) GPGTurnBasedParticipantStatus myStatus;
 
 + (GPGTurnBasedMatchCreationResult)createMatchWithConfig:(GPGMultiplayerConfig *)config
                                        completionHandler:(GPGTurnBasedMatchCreateBlock)completionHandler;
@@ -102,6 +102,25 @@ typedef void (^GPGTurnBasedMatchCompletionBlock)(NSError *error);
                      maxResults:(int)maxResults
                       pageToken:(NSString *)pageToken
               completionHandler:(GPGTurnBasedMatchListBlock)completionHandler;
+
++ (void)allMatchesWithCompletionHandler:(GPGTurnBasedMatchesBlock)completionHandler;
+
++ (void)allMatchesFromDataSource:(GPGDataSource)dataSource
+               completionHandler:(GPGTurnBasedMatchesBlock)completionHandler;
+
++ (void)matchesForMatchStatus:(GPGTurnBasedMatchStatus)status
+            completionHandler:(GPGTurnBasedMatchesBlock)completionHandler;
+
++ (void)matchesForMatchStatus:(GPGTurnBasedMatchStatus)status
+                   dataSource:(GPGDataSource)dataSource
+            completionHandler:(GPGTurnBasedMatchesBlock)completionHandler;
+
++ (void)matchesForUserMatchStatus:(GPGTurnBasedUserMatchStatus)status
+                completionHandler:(GPGTurnBasedMatchesBlock)completionHandler;
+
++ (void)matchesForUserMatchStatus:(GPGTurnBasedUserMatchStatus)status
+                       dataSource:(GPGDataSource)dataSource
+                completionHandler:(GPGTurnBasedMatchesBlock)completionHandler;
 
 - (void)cancelWithCompletionHandler:(GPGTurnBasedMatchCompletionBlock)completionHandler;
 
